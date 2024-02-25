@@ -1,0 +1,19 @@
+
+.circular-progress {
+    transform: rotate(-90deg);
+  }
+  
+  .progress-track {
+    fill: none;
+    stroke: #4758DC;
+    stroke-width: 20;
+  }
+  
+  .progress-indicator {
+    fill: none;
+    stroke: rgba(255,255,255, 0.3);
+    stroke-width: 20;
+    stroke-linecap: round;
+    stroke-dasharray: 0, 1000;
+    transition: stroke-dasharray 1s linear;
+  }

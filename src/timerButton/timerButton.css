@@ -1,0 +1,28 @@
+.timerButton{
+    display: flex;
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 25px;
+    background: var(--RoyalBlue, #4758DC);
+    box-shadow: 0px 0px 6px 0px rgba(71, 88, 220, 0.20);
+
+    cursor: pointer;
+}
+
+.timerButton:hover{
+    box-shadow: 0px 0px 12px 0px rgba(71, 88, 220, 0.4);
+}
+
+
+.disabled{
+    background: var(--Portage, #8B9ACE);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.disabled:hover{
+    box-shadow: none;
+}

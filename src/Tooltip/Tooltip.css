@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+  /* Wrapping */
+  .tooltip-div {
+    display: inline-block;
+    position: relative;
+  }
+  
+  /* Absolute positioning */
+  .tooltip {
+    position: absolute;
+    border-radius: 4px;
+    left: 50%;
+    top: calc(-100% - 20px);
+    transform: translateX(-50%);
+    padding: 16px;
+
+    border-radius: 3px;
+    background: var(--White, #FFF);
+
+    color: var(--Manatee, #97999C);
+    font-family: "Open Sans";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 14px; /* 116.667% */
+    z-index: 100;
+    white-space: nowrap;
+    box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.25);
+
+  }
+  

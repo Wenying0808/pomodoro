@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+li{
+    list-style-type: none;
+}
+
+a{
+    display: flex;
+    width: 160px;
+    padding: 20px;
+    align-items: center;
+    gap: 20px;
+
+    cursor: pointer;
+}
+
+a:hover{
+    background: var(--Zumtho, #E1EBFF);
+}
+
+.label{
+    font-family: "Open Sans";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
