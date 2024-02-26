@@ -12,7 +12,7 @@ const CircularProgressTimer = ({ value, remainingTime, sessionName }) => {
       trackColor = 'var(--Salem, #058F23)';
       renamingDisplayContent = <FontAwesomeIcon icon={faCheck} size='lg' color={trackColor} x="50%" y="45%"/>;
     } else {
-      trackColor = sessionName === 'Break' ? 'var(--Lavender, #BB6BD9)' : 'var(--RoyalBlue, #4758DC)';
+      trackColor = sessionName === 'Break' ? 'var(--Jaffa, #F2994A)' : 'var(--RoyalBlue, #4758DC)';
       renamingDisplayContent = <tspan className="remaining-time" x="50%" y="45%" fontSize="72" fontWeight="700" >{remainingTime}</tspan>
     }
     
