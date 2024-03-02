@@ -1,19 +1,16 @@
 import React from "react";
-import NavItem from "./navItem";
 import Logo from "../logo/logo";
-import { faClock, faGear } from '@fortawesome/free-solid-svg-icons';
+import IconButton from "../IconButton/IconButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 import './navbar.css';
 
 
-export const Navbar = () => {
+export const Navbar = ({onClickSettings}) => {
     return(
         <div className='navbar'>
             <Logo/>
-            <ul className='navItems'>
-                <NavItem to='./timer' icon={faClock} label='Timer' />
-                <NavItem to='./settings' icon={faGear} label='Settings' />
-            </ul>
-            <div className='block'></div>
+            <IconButton icon={<FontAwesomeIcon icon={faGear} size="xl"></FontAwesomeIcon>} onClick={onClickSettings}/>
         </div>
     );
 };

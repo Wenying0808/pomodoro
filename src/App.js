@@ -1,13 +1,10 @@
-
 import './App.css';
 import React, {useState, useEffect} from 'react';
+import Navbar from './navbar/navbar';
 import TimerButton from './timerButton/timerButton';
 import { faPlay, faPause, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import beepSound from './audio_BeepSound.wav';
-import Logo from './logo/logo';
-import IconButton from './IconButton/IconButton';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+
 import CircularProgressTimer from './curcularProgress/circularProgressTimer';
 
 
@@ -23,14 +20,25 @@ function App() {
   const [isSettingsEmpty, setIsSettingsEmpty] = useState (true);
   const [isSettingsVisible, setIsSettingsVisible] = useState (true);
   const [progressValue, setProgressValue] = useState(0);
-    
+  const [radius, setRadius] = useState(window.innerWidth < 767 ? 100 : 170);
+ 
+  /*Make sure the timer dynamically changes when resizing - to be fixed */
+  useEffect(() => {
+    const handleResize = () => {
+      setRadius(window.innerWidth < 767 ? 100 : 170); // Update radius based on window width
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
 
   useEffect (() => {
     let interval;
     if (timerRunning) {
-
-      
-
       // Decrease remaining time every second
       interval = setInterval(() => {
         //create an array which contains minutes and seconds as separate string, then convert string to number by parseFloat
@@ -51,13 +59,17 @@ function App() {
           beepAudio.play();
         }
 
+
         //calculate animation of circular progress
-        const duration = timerType === 'Focus' ? focusDuration : breakDuration;
-        const circumference = 2 * Math.PI * 170 // radius is 90
-        const progressIncrement = circumference / (duration * 60); // Calculate the increment per second to reach 1000
-        const newProgress = progressValue + progressIncrement;
-        const progress = Math.min(newProgress, circumference); // Ensure progress doesn't exceed 1000
-        setProgressValue(progress);
+        
+          const duration = timerType === 'Focus' ? focusDuration : breakDuration;
+          const circumference = 2 * Math.PI * radius
+          const progressIncrement = circumference / (duration * 60); // Calculate the increment per second to reach 1000
+          //const newProgress = progressValue + progressIncrement;
+          
+          //make sure that the progressValue is up-to-date when resizing
+          setProgressValue(prevProgressValue => prevProgressValue + progressIncrement);
+       
 
         //check if the timer has reached 00:00
         if (newTime === '00:00') {
@@ -95,7 +107,7 @@ function App() {
     }
     return () => clearInterval(interval); // Cleanup on unmount
 
-  }, [timerRunning, timerType, remainingTime, sessionCount, totalSessionCount, focusDuration, breakDuration]);
+  }, [timerRunning, timerType, remainingTime, sessionCount, totalSessionCount, focusDuration, breakDuration, progressValue, radius]);
     
   const formatTime = (durationInSeconds) => {
     const minutes = Math.floor(durationInSeconds / 60);
@@ -146,12 +158,14 @@ function App() {
 
   return (
     <div className='App'>
+      <Navbar onClickSettings={toggleSettingsVisibility}/>
       <div className='Wrapper'>
-        <div className='pane'>
-          <Logo/>
-          <div className='settings'>
-            <IconButton icon={<FontAwesomeIcon icon={faGear} size="xl"></FontAwesomeIcon>} tooltipText={isSettingsVisible? "Hide Settings" :"Show Settings"} onClick={toggleSettingsVisibility}/>
-            {isSettingsVisible && (
+        {isSettingsVisible && (
+        <div className={`settings-pane ${isSettingsVisible ? 'slide-in' : ''}`}>
+          <div className='settings-pane-title'>
+            Settings
+          </div>
+          <div className='settings'>  
               <><div className='focus-duration'>
                 <span className='input-label'>Focus Duration </span>
                 <input type='number' id='focus-duration' name='focus-duration' placeholder='(mins)' value={focusDuration} min='1' max='60' required onChange={handleFocusDurationChange}></input>
@@ -162,13 +176,11 @@ function App() {
                   <span className='input-label'>Session</span>
                   <input type='number' id='total-session-count' name='total-session-count' placeholder='(mins)' value={totalSessionCount} min='1' max='100' required onChange={handleTotalSessionCountChange}></input>
                 </div></>
-            )}
-            
             
           </div>
-        </div>
+        </div>)}
         
-
+        
         <div className='timer'>
           <CircularProgressTimer value={progressValue} remainingTime={remainingTime} sessionName={timerType}/>
           <div className='session-display'>
