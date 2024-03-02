@@ -7,25 +7,37 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 const CircularProgressTimer = ({ value, remainingTime, sessionName }) => {
     let trackColor;
-    let renamingDisplayContent;
+    let remainingDisplayContent;
+    let TimerSize = 360;
+
+    if (window.innerWidth < 767) {
+      TimerSize = 220;
+    }
+
+    const cx = TimerSize/2; // Center x-coordinate
+    const cy = TimerSize/2; // Center y-coordinate
+    const radius = (TimerSize-20)/2;
+    const circumference = 2 * Math.PI*radius;
+
+    
+
     if (sessionName === 'Complete') {
       trackColor = 'var(--Salem, #058F23)';
-      renamingDisplayContent = <FontAwesomeIcon icon={faCheck} size='lg' color={trackColor} x="50%" y="45%"/>;
+      remainingDisplayContent = <FontAwesomeIcon icon={faCheck} size='lg' color={trackColor} />;
     } else {
       trackColor = sessionName === 'Break' ? 'var(--Jaffa, #F2994A)' : 'var(--RoyalBlue, #4758DC)';
-      renamingDisplayContent = <tspan className="remaining-time" x="50%" y="45%" fontSize="72" fontWeight="700" >{remainingTime}</tspan>
+      remainingDisplayContent = <tspan className="remaining-time" x="50%" y="45%" fontSize="72" fontWeight="700" >{remainingTime}</tspan>
     }
     
-  
     return (
-      <svg className="circular-progress" width="360" height="360" viewBox="0 0 360 360">
-        <circle className="progress-track" cx="180" cy="180" r="170" style={{ stroke: trackColor }} />
+      <svg className="circular-progress" width={TimerSize} height={TimerSize} viewBox={`0 0 ${TimerSize} ${TimerSize}`}>
+        <circle className="progress-track" cx={cx} cy={cy} r={radius} style={{ stroke: trackColor }} />
         {sessionName !== 'Complete' && (
-          <circle className="progress-indicator" cx="180" cy="180" r="170" style={{ strokeDasharray: `${value}, 1700` }} />
+          <circle className="progress-indicator" cx={cx} cy={cy} r={radius} style={{ strokeDasharray: `${value}, ${circumference}` }} />
         )}
         
-        <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" transform="rotate(90, 180, 180)"> {/* rotate text 90 degrese clockwisely as the svg in  css rotate -90 degree*/}
-          {renamingDisplayContent}
+        <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" transform={`rotate(90, ${cx}, ${cy})`}> {/* rotate text 90 degrese clockwisely as the svg in  css rotate -90 degree*/}
+          {remainingDisplayContent}
           <tspan className={`session-name ${sessionName === 'Complete' ? 'session-name-complete' : sessionName === 'Break' ? 'session-name-break' : ''}`}  x="50%" y="65%" textAnchor="middle" fontSize="32" fontWeight="700"  fill={trackColor} >{sessionName}</tspan>
         </text>
       </svg>

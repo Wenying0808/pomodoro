@@ -16,3 +16,27 @@
     stroke-dasharray: 0, 1000;
     transition: stroke-dasharray 1s linear;
   }
+
+  .session-name{
+    color: var(--RoyalBlue, #4758DC);
+    font-family: "Open Sans";
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  
+  .session-name-break{
+    color: var(--Lavender, #BB6BD9);
+  }
+  
+  .session-name-complete{
+    color: var(--Salem, #058F23);
+  }
+
+
+  @media only screen and (max-width: 767px) {
+    .session-name{
+      font-size: 18px;
+    }
+  }
