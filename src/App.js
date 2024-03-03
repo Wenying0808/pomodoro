@@ -174,7 +174,7 @@ function App() {
                   <input type='number' id='break-duration' name='break-duration' placeholder='(mins)' value={breakDuration} min='1' max='30' required onChange={handleBreakDurationChange}></input>
                 </div><div className='total-session-count'>
                   <span className='input-label'>Session</span>
-                  <input type='number' id='total-session-count' name='total-session-count' placeholder='(number)' value={totalSessionCount} min='1' max='100' required onChange={handleTotalSessionCountChange}></input>
+                  <input type='number' id='total-session-count' name='total-session-count' placeholder='number' value={totalSessionCount} min='1' max='100' required onChange={handleTotalSessionCountChange}></input>
                 </div></>
             
           </div>
