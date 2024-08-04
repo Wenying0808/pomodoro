@@ -3,8 +3,6 @@ import './circularProgressTimer.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from '@fortawesome/free-solid-svg-icons'; 
 
-
-
 const CircularProgressTimer = ({ value, remainingTime, sessionName }) => {
     let trackColor;
     let remainingDisplayContent;
@@ -14,8 +12,6 @@ const CircularProgressTimer = ({ value, remainingTime, sessionName }) => {
     const cy = TimerSize/2; // Center y-coordinate
     const radius = (TimerSize-20)/2;
     const circumference = 2 * Math.PI*radius;
-
-    
 
     if (sessionName === 'Complete') {
       trackColor = 'var(--Salem, #058F23)';

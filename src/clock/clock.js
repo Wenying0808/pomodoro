@@ -22,7 +22,6 @@ function Clock() {
   const [progressValue, setProgressValue] = useState(0);
   const [radius, setRadius] = useState(100);
 
-
   useEffect (() => {
     let interval;
     if (timerRunning) {
@@ -103,23 +102,26 @@ function Clock() {
   };
 
   const handleFocusDurationChange = (event) => {
-    setFocusDuration(parseInt(event.target.value));
-    setRemainingTime(formatTime(parseInt(event.target.value) * 60));
-    checkEmptySettings();
+    const valueFocus = event.target.value;
+    setFocusDuration(parseInt(valueFocus));
+    setRemainingTime(formatTime(parseInt(valueFocus) * 60));
+    checkEmptySettings(valueFocus, breakDuration, totalSessionCount);
   };
 
   const handleBreakDurationChange = (event) => {
-    setBreakDuration(parseInt(event.target.value));
-    checkEmptySettings();
+    const valueBreak = event.target.value;
+    setBreakDuration(parseInt(valueBreak));
+    checkEmptySettings(focusDuration, valueBreak, totalSessionCount);
   };
 
   const handleTotalSessionCountChange = (event) => {
-    setTotalSessionCount(parseInt(event.target.value));
-    checkEmptySettings();
+    const valueSession = event.target.value;
+    setTotalSessionCount(parseInt(valueSession));
+    checkEmptySettings(focusDuration, breakDuration, valueSession);
   };
 
-  const checkEmptySettings = () => {
-    if (!focusDuration || ! breakDuration || !totalSessionCount) {
+  const checkEmptySettings = (focustime, breaktime, sessions) => {
+    if (focustime === '' || breaktime === '' || sessions === '') {
       setIsSettingsEmpty (true);
     } else {
       setIsSettingsEmpty (false);
@@ -153,18 +155,50 @@ function Clock() {
           <div className='settings'>  
               <><div className='focus-duration'>
                 <span className='input-label'>Focus Duration </span>
-                <input type='number' id='focus-duration' name='focus-duration' placeholder='(mins)' value={focusDuration} min='1' max='60' required onChange={handleFocusDurationChange}></input>
+                <input 
+                    type='number' 
+                    id='focus-duration' 
+                    name='focus-duration' 
+                    placeholder='(mins)' 
+                    value={focusDuration} 
+                    min='1' 
+                    max='60' 
+                    required 
+                    onChange={handleFocusDurationChange}
+                    onBlur={() => setFocusDuration(prev => prev === '' ? '' : parseInt(prev))}
+                />
               </div><div className='break-duration'>
                   <span className='input-label'>Break Duration</span>
-                  <input type='number' id='break-duration' name='break-duration' placeholder='(mins)' value={breakDuration} min='1' max='30' required onChange={handleBreakDurationChange}></input>
+                  <input 
+                    type='number' 
+                    id='break-duration' 
+                    name='break-duration' 
+                    placeholder='(mins)' 
+                    value={breakDuration} 
+                    min='1' 
+                    max='30' 
+                    required 
+                    onChange={handleBreakDurationChange}
+                    onBlur={() => setBreakDuration(prev => prev === '' ? '' : parseInt(prev))}
+                />
                 </div><div className='total-session-count'>
                   <span className='input-label'>Session</span>
-                  <input type='number' id='total-session-count' name='total-session-count' placeholder='number' value={totalSessionCount} min='1' max='100' required onChange={handleTotalSessionCountChange}></input>
+                  <input 
+                    type='number' 
+                    id='total-session-count' 
+                    name='total-session-count' 
+                    placeholder='number' 
+                    value={totalSessionCount} 
+                    min='1' 
+                    max='100' 
+                    required 
+                    onChange={handleTotalSessionCountChange}
+                    onBlur={() => setTotalSessionCount(prev => prev === '' ? '' : parseInt(prev))}
+                    />
                 </div></>
             
           </div>
         </div>)}
-        
         
         <div className='timer'>
           <CircularProgressTimer value={progressValue} remainingTime={remainingTime} sessionName={timerType}/>
