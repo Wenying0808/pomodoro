@@ -132,7 +132,6 @@ function Clock() {
     setTimerRunning( isTimerRunning => !isTimerRunning);
   };
 
-  
   const handleResetTimer = () => {
     setTimerType('Focus');
     setRemainingTime(formatTime(parseInt(focusDuration) * 60));
