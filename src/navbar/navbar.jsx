@@ -1,16 +1,22 @@
 import React from "react";
 import Logo from "../logo/logo";
-import IconButton from "../IconButton/IconButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+
+import TextButton from "../textButton/textButton";
+
 import './navbar.css';
 
 
-export const Navbar = ({onClickSettings}) => {
+export const Navbar = ({isLoggedIn, onClickLogIn, onClickLogOut}) => {
     return(
         <div className='navbar'>
             <Logo/>
-            <IconButton icon={<FontAwesomeIcon icon={faGear} size="xl"></FontAwesomeIcon>} onClick={onClickSettings}/>
+            <div className='actions'>
+                {isLoggedIn 
+                    ?  <TextButton label="Log Out" onClick={onClickLogOut}/>
+                    : <TextButton label="Log In" onClick={onClickLogIn}/>
+                }
+            </div>
+            
         </div>
     );
 };

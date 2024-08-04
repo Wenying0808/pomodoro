@@ -2,7 +2,7 @@
 
 .logo{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
 }
@@ -16,25 +16,8 @@
 span{
     color: var(--RoyalBlue, #4758DC);
     font-family: 'Oswald';
-    font-size: 18px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 600;
-    line-height: 28px; /* 155.556% */
+    line-height: 18px; 
 }
-
-@media only screen and (max-width: 767px) {
-    .logo{
-        flex-direction: row;
-        gap: 6px;
-    }
-    .logo img{
-        width: 25px; /* fix me*/
-        height: 25px; /* fix me*/
-    }
-
-    span{
-        font-size: 14px;
-        line-height: 18px; 
-    }
-   
-  }
