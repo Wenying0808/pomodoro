@@ -1,0 +1,15 @@
+export const colors = {
+    Black: '#000000',
+    Thundora: '#404040',
+    Manatee: '#97999C',
+    SilverSand: '#BBBCBE',
+    Gallery: '#EFEFEF',
+    White: '#FFFFFF',
+    RoyalBlue: '#4758DC',
+    Portage: '#8B9ACE',
+    Zumtho: '#E1EBFF',
+    Alizarin: '#E32327',
+    Jaffa: '#F2994A',
+    Salem: '#058F23',
+    Lavender: '#BB6BD9',
+  };
