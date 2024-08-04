@@ -8,11 +8,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 const CircularProgressTimer = ({ value, remainingTime, sessionName }) => {
     let trackColor;
     let remainingDisplayContent;
-    let TimerSize = 360;
-
-    if (window.innerWidth < 767) {
-      TimerSize = 220;
-    }
+    let TimerSize = 220;
 
     const cx = TimerSize/2; // Center x-coordinate
     const cy = TimerSize/2; // Center y-coordinate
@@ -38,7 +34,7 @@ const CircularProgressTimer = ({ value, remainingTime, sessionName }) => {
         
         <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" transform={`rotate(90, ${cx}, ${cy})`}> {/* rotate text 90 degrese clockwisely as the svg in  css rotate -90 degree*/}
           {remainingDisplayContent}
-          <tspan className={`session-name ${sessionName === 'Complete' ? 'session-name-complete' : sessionName === 'Break' ? 'session-name-break' : ''}`}  x="50%" y="65%" textAnchor="middle" fontSize="32" fontWeight="700"  fill={trackColor} >{sessionName}</tspan>
+          <tspan className={`session-name ${sessionName === 'Complete' ? 'session-name-complete' : sessionName === 'Break' ? 'session-name-break' : ''}`}  x="50%" y="65%" textAnchor="middle" fontSize="24" fontWeight="700"  fill={trackColor} >{sessionName}</tspan>
         </text>
       </svg>
     );

@@ -20,20 +20,7 @@ function Clock() {
   const [isSettingsEmpty, setIsSettingsEmpty] = useState (true);
   const [isSettingsVisible, setIsSettingsVisible] = useState (true);
   const [progressValue, setProgressValue] = useState(0);
-  const [radius, setRadius] = useState(window.innerWidth < 767 ? 100 : 170);
- 
-  /*Make sure the timer dynamically changes when resizing - to be fixed */
-  useEffect(() => {
-    const handleResize = () => {
-      setRadius(window.innerWidth < 767 ? 100 : 170); // Update radius based on window width
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const [radius, setRadius] = useState(100);
 
 
   useEffect (() => {
