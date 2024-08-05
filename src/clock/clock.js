@@ -145,7 +145,7 @@ function Clock() {
   };
 
   return (
-      <div className='wrapper'>
+      <div className='container'>
         {isSettingsVisible && (
         <div className={`settings-pane ${isSettingsVisible ? 'slide-in' : ''}`}>
           <div className='settings-pane-title'>

@@ -1,14 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
-.wrapper{
+.container{
     box-sizing: border-box;
-  
-    position: fixed;
-    top: 62px;
-    left: 0px;
     display: flex;
     flex-direction: row;
-    
     width: 100%;
     height: calc(100% - 62px);
   }
@@ -28,7 +23,6 @@
     border-radius: 0px 20px 20px 0px;
     background: var(--White, #FFF);
     box-shadow: 5px 5px 10px 0px rgba(71, 88, 220, 0.15);
-  
   }
   
   /*Add animation*/
@@ -58,7 +52,6 @@
   }
   
   
-  
   .settings-pane-title{
     color: var(--RoyalBlue, #4758DC);
     font-family: "Open Sans";
@@ -66,7 +59,6 @@
     font-style: normal;
     font-weight: 700;
     line-height: 18px; 
-    
   }
   
   .settings{
