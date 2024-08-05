@@ -9,7 +9,7 @@ import beepSound from '../audio_BeepSound.wav';
 import CircularProgressTimer from '../curcularProgress/circularProgressTimer';
 
 
-export default function Clock({ clockState, onClockStateChange }) {
+export default function Clock({ user, clockState, onClockStateChange }) {
   const {
     focusDuration,
     breakDuration,
@@ -22,6 +22,20 @@ export default function Clock({ clockState, onClockStateChange }) {
     isSettingsEmpty,
     isSettingsVisible,
   } = clockState;
+
+  // save clock settings to firestore
+  const saveSettingsToFirestore = async (newSettings) => {
+    // not logged in
+    if (!user) return;
+
+    // loggedin
+    try {
+      //get the clock collection under usercollection
+
+    } catch (error){
+      console.log('Error saving settings to Firestore', error);
+    }
+  };
 
   // Replace all setFocusDuration, setBreakDuration, etc. with:
   const updateClockState = (updates) => {

@@ -1,13 +1,11 @@
 import React from 'react';
 import './IconButton.css';
-import Tooltip from '../Tooltip/Tooltip';
 
 const IconButton = (
     {disabled,
     icon,
     onClick,
-    onMouseover,
-    
+    onMouseover, 
     }) => {
         const getClassName = () => {
             let className = `IconButtonDiv ${disabled ? "disabled" : ""}`;

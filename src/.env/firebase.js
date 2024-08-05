@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { getFirestore, addDoc, setDoc, collection, doc, getDoc } from 'firebase/firestore';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyAiXjnyp4n0K7As5qSO5pJ9sfKgZ01Vous",
@@ -19,26 +19,40 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 const signInWithGoogle = async() => {
-  const userCredential = await signInWithPopup(auth, provider);
-  const user = userCredential.user;
+  try{
+    const userCredential = await signInWithPopup(auth, provider);
+    const user = userCredential.user;
+    console.log('userCredential', userCredential);
 
-  // check if user already exist
-  const userRef = collection(db, "users");
-  const q = query(userRef, where("uid", "==", user.uid))
-  const querySnapshot = await getDocs(q);
+    // Get a reference to the users collection
+    const usersCollectionRef = collection(db, 'users');
 
-  // create a user doc if it doesn't exist
-  if (querySnapshot.empty){
-    const newUser = {
-      uid: user.uid,
-      name: user.displayName,
-      email: user.email,
-      tasks: [],
-      clock: [],
-    };
-    await addDoc(userRef, newUser);
+    // Get a reference to the user doc
+    const userDocRef = doc(usersCollectionRef, user.uid);
+
+    // Check if the document exists
+    const docSnap = await getDoc(userDocRef);
+  
+    // create a user doc if it doesn't exist
+    if (!docSnap.exists()){
+      const newUser = {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        tasks: {},
+        clock: {
+          focusDuration: 25, 
+          breakDuration: 5,  
+          totalSessionCount: 4
+        },
+      };
+      await setDoc(userDocRef, newUser);
+    }
+    return userCredential;
+  } catch(error) {
+    console.error("Error signing in: ", error);
   }
-  return userCredential;
+    
 };
 
 export default auth;

@@ -46,11 +46,7 @@ export default function App() {
   }, []);
 
   const handleLogIn = async() => {
-    try {
-      await signInWithGoogle();
-    } catch (error) {
-      console.error("Error signing in: ", error);
-    }
+    await signInWithGoogle();
   };
 
   const handleLogOut = async() => {
@@ -74,7 +70,7 @@ export default function App() {
       <Navbar isLoggedIn={isLoggedIn} onClickLogIn={handleLogIn} onClickLogOut={handleLogOut} username={username}/>
       <div className='content'>
         <CustomToggleButton value={view} onChange={handleViewChange}/>
-        {view === 'clock' ? <Clock clockState={clockState} onClockStateChange={handleClockStateChange}/>  : <Tasks/>}
+        {view === 'clock' ? <Clock user={user} clockState={clockState} onClockStateChange={handleClockStateChange}/>  : <Tasks/>}
       </div>
     </div>
   );
