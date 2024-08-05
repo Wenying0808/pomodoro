@@ -210,7 +210,7 @@ function Clock() {
             <TimerButton icon={faPause} onClick={handleStartPauseTimer}/> : 
             <TimerButton icon={faPlay} onClick={handleStartPauseTimer} disabled={ isSettingsEmpty || timerType === 'Complete'}/>
             }
-            <TimerButton icon={faRotateLeft} onClick={handleResetTimer} disabled={isSettingsEmpty}/> 
+            <TimerButton icon={faRotateLeft} onClick={handleResetTimer} disabled={ !timerRunning }/> 
           </div>
         </div>
       </div>
