@@ -10,15 +10,15 @@ import CircularProgressTimer from '../curcularProgress/circularProgressTimer';
 
 
 function Clock() {
-  const [focusDuration, setFocusDuration] = useState('');
-  const [breakDuration, setBreakDuration] = useState('');
+  const [focusDuration, setFocusDuration] = useState(25);
+  const [breakDuration, setBreakDuration] = useState(5);
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerType, setTimerType] = useState('Focus');
-  const [remainingTime, setRemainingTime] = useState ('');
-  const [sessionCount, setSessionCount] = useState (1);
-  const [totalSessionCount, setTotalSessionCount] = useState ('');
-  const [isSettingsEmpty, setIsSettingsEmpty] = useState (true);
-  const [isSettingsVisible, setIsSettingsVisible] = useState (true);
+  const [remainingTime, setRemainingTime] = useState ('25:00');
+  const [sessionCount, setSessionCount] = useState(1);
+  const [totalSessionCount, setTotalSessionCount] = useState(4);
+  const [isSettingsEmpty, setIsSettingsEmpty] = useState(false);
+  const [isSettingsVisible, setIsSettingsVisible] = useState(true);
   const [progressValue, setProgressValue] = useState(0);
   const [radius, setRadius] = useState(100);
 
