@@ -1,5 +1,7 @@
 import './clock.css';
 import React, {useState, useEffect} from 'react';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../.env/firebase';
 import TimerButton from '../timerButton/timerButton';
 import IconButton from "../IconButton/IconButton";
 import { faPlay, faPause, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
@@ -31,7 +33,12 @@ export default function Clock({ user, clockState, onClockStateChange }) {
     // loggedin
     try {
       //get the clock collection under usercollection
+      const userDocRef = doc(db, "users", user.uid);
 
+      // update the clock settings within the doc
+      await updateDoc(userDocRef, { clock: newSettings })
+      console.log("Clock settings saved successfully!");
+      
     } catch (error){
       console.log('Error saving settings to Firestore', error);
     }
@@ -147,6 +154,11 @@ export default function Clock({ user, clockState, onClockStateChange }) {
       focusDuration: parseInt(valueFocus),
       remainingTime: formatTime(parseInt(valueFocus) * 60),
     });
+    saveSettingsToFirestore({
+      focusDuration: parseInt(valueFocus),
+      breakDuration: clockState.breakDuration,
+      totalSessionCount: clockState.totalSessionCount,
+    });
     checkEmptySettings(valueFocus, clockState.breakDuration, clockState.totalSessionCount);
   };
 
@@ -155,12 +167,22 @@ export default function Clock({ user, clockState, onClockStateChange }) {
     updateClockState({
       breakDuration: parseInt(valueBreak),
     });
+    saveSettingsToFirestore({
+      focusDuration: clockState.focusDuration,
+      breakDuration: parseInt(valueBreak),
+      totalSessionCount: clockState.totalSessionCount,
+    });
     checkEmptySettings(clockState.focusDuration, valueBreak, clockState.totalSessionCount);
   };
 
   const handleTotalSessionCountChange = (event) => {
     const valueSession = event.target.value;
     updateClockState({
+      totalSessionCount: parseInt(valueSession),
+    });
+    saveSettingsToFirestore({
+      focusDuration: clockState.focusDuration,
+      breakDuration: clockState.breakDuration,
       totalSessionCount: parseInt(valueSession),
     });
     checkEmptySettings(clockState.focusDuration, clockState.breakDuration, valueSession);

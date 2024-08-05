@@ -31,10 +31,10 @@ const signInWithGoogle = async() => {
     const userDocRef = doc(usersCollectionRef, user.uid);
 
     // Check if the document exists
-    const docSnap = await getDoc(userDocRef);
+    const userDocSnap = await getDoc(userDocRef);
   
     // create a user doc if it doesn't exist
-    if (!docSnap.exists()){
+    if (!userDocSnap.exists()){
       const newUser = {
         uid: user.uid,
         name: user.displayName,
