@@ -8,7 +8,12 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 
 const CustomToggleButton = ({value, onChange}) => {
     return (
-        <ToggleButtonGroup size="small" value={value} onChange={onChange} exclusive>
+        <ToggleButtonGroup 
+            size="small" 
+            value={value} 
+            onChange={onChange} 
+            exclusive
+        >
             <ToggleButton 
                 value="clock" 
                 sx={{ 
