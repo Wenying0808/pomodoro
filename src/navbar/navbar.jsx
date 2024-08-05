@@ -12,7 +12,7 @@ export const Navbar = ({ isLoggedIn, onClickLogIn, onClickLogOut, username }) =>
                 {isLoggedIn 
                     ? 
                     <div className="name-button">
-                        <span style={{ color: colors.Thundora }}>{`Have a productive day, ${username} !`}</span>
+                        <span style={{ color: colors.Manatee }}>{`Have a productive day, ${username} !`}</span>
                         <TextButton label="Log Out" onClick={onClickLogOut}/>
                     </div>
                     : 
