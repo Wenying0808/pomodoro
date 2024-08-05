@@ -18,7 +18,7 @@ function Clock() {
   const [sessionCount, setSessionCount] = useState(1);
   const [totalSessionCount, setTotalSessionCount] = useState(4);
   const [isSettingsEmpty, setIsSettingsEmpty] = useState(false);
-  const [isSettingsVisible, setIsSettingsVisible] = useState(true);
+  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [progressValue, setProgressValue] = useState(0);
   const [radius, setRadius] = useState(100);
 
