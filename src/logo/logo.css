@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Oswald');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Oswald:wght@200..700&display=swap');
 
 .logo{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
 }
@@ -13,28 +14,11 @@
     fill: var(--RoyalBlue, #4758DC);
 }
 
-span{
+.logo-name{
     color: var(--RoyalBlue, #4758DC);
     font-family: 'Oswald';
-    font-size: 18px;
+    font-size: 14px;
     font-style: normal;
-    font-weight: 600;
-    line-height: 28px; /* 155.556% */
+    font-weight: 700;
+    line-height: 18px; 
 }
-
-@media only screen and (max-width: 767px) {
-    .logo{
-        flex-direction: row;
-        gap: 6px;
-    }
-    .logo img{
-        width: 25px; /* fix me*/
-        height: 25px; /* fix me*/
-    }
-
-    span{
-        font-size: 14px;
-        line-height: 18px; 
-    }
-   
-  }

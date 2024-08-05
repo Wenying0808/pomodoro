@@ -5,13 +5,13 @@
   
   .progress-track {
     fill: none;
-    stroke-width: 20;
+    stroke-width: 16;
   }
   
   .progress-indicator {
     fill: none;
     stroke: rgba(255,255,255, 0.3);
-    stroke-width: 20;
+    stroke-width: 16;
     stroke-linecap: round;
     stroke-dasharray: 0, 1000;
     transition: stroke-dasharray 1s linear;
@@ -20,7 +20,7 @@
   .session-name{
     color: var(--RoyalBlue, #4758DC);
     font-family: "Open Sans";
-    font-size: 32px;
+    font-size: 24px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
