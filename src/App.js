@@ -13,7 +13,23 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  console.log("isLoggedIn", isLoggedIn);
+
+  const [clockState, setClockState] = useState({
+    focusDuration: 25,
+    breakDuration: 5,
+    timerRunning: false,
+    timerType: 'Focus',
+    remainingTime: '25:00',
+    sessionCount: 1,
+    totalSessionCount: 4,
+    progressValue: 0,
+    isSettingsEmpty: false,
+    isSettingsVisible: false,
+  });
+
+  const handleClockStateChange = (newClockState) => {
+    setClockState(newClockState);
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -58,7 +74,7 @@ export default function App() {
       <Navbar isLoggedIn={isLoggedIn} onClickLogIn={handleLogIn} onClickLogOut={handleLogOut} username={username}/>
       <div className='content'>
         <CustomToggleButton value={view} onChange={handleViewChange}/>
-        {view === 'clock' ? <Clock/>  : <Tasks/>}
+        {view === 'clock' ? <Clock clockState={clockState} onClockStateChange={handleClockStateChange}/>  : <Tasks/>}
       </div>
     </div>
   );

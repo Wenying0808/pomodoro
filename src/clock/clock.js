@@ -9,26 +9,37 @@ import beepSound from '../audio_BeepSound.wav';
 import CircularProgressTimer from '../curcularProgress/circularProgressTimer';
 
 
-function Clock() {
-  const [focusDuration, setFocusDuration] = useState(25);
-  const [breakDuration, setBreakDuration] = useState(5);
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [timerType, setTimerType] = useState('Focus');
-  const [remainingTime, setRemainingTime] = useState ('25:00');
-  const [sessionCount, setSessionCount] = useState(1);
-  const [totalSessionCount, setTotalSessionCount] = useState(4);
-  const [isSettingsEmpty, setIsSettingsEmpty] = useState(false);
-  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
-  const [progressValue, setProgressValue] = useState(0);
-  const [radius, setRadius] = useState(100);
+export default function Clock({ clockState, onClockStateChange }) {
+  const {
+    focusDuration,
+    breakDuration,
+    timerRunning,
+    timerType,
+    remainingTime,
+    sessionCount,
+    totalSessionCount,
+    progressValue,
+    isSettingsEmpty,
+    isSettingsVisible,
+  } = clockState;
+
+  // Replace all setFocusDuration, setBreakDuration, etc. with:
+  const updateClockState = (updates) => {
+    onClockStateChange(prevState => {
+      const newState = typeof updates === 'function' ? updates(prevState) : updates;
+      return { ...prevState, ...newState }
+    });
+  };
+
+  const radius = 100;
 
   useEffect (() => {
     let interval;
-    if (timerRunning) {
+    if (clockState.timerRunning) {
       // Decrease remaining time every second
       interval = setInterval(() => {
         //create an array which contains minutes and seconds as separate string, then convert string to number by parseFloat
-        const [minutes, seconds] = remainingTime.split(':').map(parseFloat);
+        const [minutes, seconds] = clockState.remainingTime.split(':').map(parseFloat);
         let newMinutes = minutes;
         let newSeconds = seconds - 1;
         if (newSeconds < 0) {
@@ -37,7 +48,9 @@ function Clock() {
         }
 
         const newTime = `${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')}`;
-        setRemainingTime (newTime);
+        updateClockState({
+          remainingTime: newTime,
+        });
 
         if(newTime === '00:04'){
           //play beep sound
@@ -45,44 +58,57 @@ function Clock() {
           beepAudio.play();
         }
 
-
         //calculate animation of circular progress
         
-          const duration = timerType === 'Focus' ? focusDuration : breakDuration;
+          const duration = clockState.timerType === 'Focus' ? clockState.focusDuration : clockState.breakDuration;
           const circumference = 2 * Math.PI * radius
           const progressIncrement = circumference / (duration * 60); // Calculate the increment per second to reach 1000
           //const newProgress = progressValue + progressIncrement;
           
           //make sure that the progressValue is up-to-date when resizing
-          setProgressValue(prevProgressValue => prevProgressValue + progressIncrement);
-       
+          updateClockState({
+            progressValue: prevProgressValue => prevProgressValue + progressIncrement,
+          });
 
         //check if the timer has reached 00:00
         if (newTime === '00:00') {
           
           //change timer type
-          const nextSessionType = timerType === 'Focus' ? 'Break' : 'Focus';
-          setTimerType(nextSessionType);
+          const nextSessionType = clockState.timerType === 'Focus' ? 'Break' : 'Focus';
+          updateClockState({
+            timerType: nextSessionType,
+          });
+
           // Reset progress value when timer type changes
-          setProgressValue(0);
+          updateClockState({
+            progressValue: 0,
+          });
 
           //change remaning time
-          const nextRemainingTime = nextSessionType === 'Break' ? formatTime(breakDuration * 60) : formatTime(focusDuration * 60);
-          setRemainingTime(nextRemainingTime);
+          const nextRemainingTime = nextSessionType === 'Break' ? formatTime(clockState.breakDuration * 60) : formatTime(clockState.focusDuration * 60);
+          updateClockState({
+            remainingTime: nextRemainingTime,
+          });
       
           //change session count when it was a complete session 
           if (nextSessionType === 'Focus') {
-            setSessionCount(prevSessionCount => prevSessionCount + 1);
-            }
+            updateClockState({
+              sessionCount: prevSessionCount => prevSessionCount + 1,
+            });
+          }
         
-          if (nextSessionType === 'Break' && sessionCount === totalSessionCount) {
-            setTimerType('Complete');
-            setRemainingTime('');
-            setTimerRunning(false);
+          if (nextSessionType === 'Break' && clockState.sessionCount === clockState.totalSessionCount) {
+            updateClockState({
+              timerType: 'Complete',
+              remainingTime: '',
+              timerRunning: false
+            });
           }
           
           //pause the timer
-          setTimerRunning(false);
+          updateClockState({
+            timerRunning: false
+          });
         }
 
       }, 1000);
@@ -93,7 +119,7 @@ function Clock() {
     }
     return () => clearInterval(interval); // Cleanup on unmount
 
-  }, [timerRunning, timerType, remainingTime, sessionCount, totalSessionCount, focusDuration, breakDuration, progressValue, radius]);
+  }, [clockState]);
     
   const formatTime = (durationInSeconds) => {
     const minutes = Math.floor(durationInSeconds / 60);
@@ -103,118 +129,133 @@ function Clock() {
 
   const handleFocusDurationChange = (event) => {
     const valueFocus = event.target.value;
-    setFocusDuration(parseInt(valueFocus));
-    setRemainingTime(formatTime(parseInt(valueFocus) * 60));
-    checkEmptySettings(valueFocus, breakDuration, totalSessionCount);
+    updateClockState({
+      focusDuration: parseInt(valueFocus),
+      remainingTime: formatTime(parseInt(valueFocus) * 60),
+    });
+    checkEmptySettings(valueFocus, clockState.breakDuration, clockState.totalSessionCount);
   };
 
   const handleBreakDurationChange = (event) => {
     const valueBreak = event.target.value;
-    setBreakDuration(parseInt(valueBreak));
-    checkEmptySettings(focusDuration, valueBreak, totalSessionCount);
+    updateClockState({
+      breakDuration: parseInt(valueBreak),
+    });
+    checkEmptySettings(clockState.focusDuration, valueBreak, clockState.totalSessionCount);
   };
 
   const handleTotalSessionCountChange = (event) => {
     const valueSession = event.target.value;
-    setTotalSessionCount(parseInt(valueSession));
-    checkEmptySettings(focusDuration, breakDuration, valueSession);
+    updateClockState({
+      totalSessionCount: parseInt(valueSession),
+    });
+    checkEmptySettings(clockState.focusDuration, clockState.breakDuration, valueSession);
   };
 
   const checkEmptySettings = (focustime, breaktime, sessions) => {
     if (focustime === '' || breaktime === '' || sessions === '') {
-      setIsSettingsEmpty (true);
+      updateClockState({
+        isSettingsEmpty: true,
+      });
     } else {
-      setIsSettingsEmpty (false);
+      updateClockState({
+        isSettingsEmpty: false,
+      });
     }
   };
 
   const handleStartPauseTimer = () => {
-    setTimerRunning( isTimerRunning => !isTimerRunning);
+    updateClockState({
+      timerRunning: prev => !prev,
+    });
   };
 
   const handleResetTimer = () => {
-    setTimerType('Focus');
-    setRemainingTime(formatTime(parseInt(focusDuration) * 60));
-    setSessionCount(1);
-    setProgressValue(0); // Reset progress value
-    setTimerRunning(false);
+    updateClockState({
+      timerType: 'Focus',
+      remainingTime: formatTime(parseInt(clockState.focusDuration) * 60),
+      sessionCout: 1,
+      progressValue: 0,
+      timerRunning: false
+    });
   };
 
   const toggleSettingsVisibility = () => {
-    setIsSettingsVisible(!isSettingsVisible);
+    updateClockState(prevState => ({
+      isSettingsVisible: !prevState.isSettingsVisible,
+    }));
   };
 
   return (
       <div className='container'>
-        {isSettingsVisible && (
-        <div className={`settings-pane ${isSettingsVisible ? 'slide-in' : ''}`}>
+        {clockState.isSettingsVisible && (
+        <div className={`settings-pane ${clockState.isSettingsVisible ? 'slide-in' : ''}`}>
           <div className='settings-pane-title'>
             Settings
           </div>
           <div className='settings'>  
-              <><div className='focus-duration'>
+            <>
+              <div className='focus-duration'>
                 <span className='input-label'>Focus Duration </span>
                 <input 
                     type='number' 
                     id='focus-duration' 
                     name='focus-duration' 
                     placeholder='(mins)' 
-                    value={focusDuration} 
+                    value={clockState.focusDuration} 
                     min='1' 
                     max='60' 
                     required 
                     onChange={handleFocusDurationChange}
-                    onBlur={() => setFocusDuration(prev => prev === '' ? '' : parseInt(prev))}
+                    
                 />
-              </div><div className='break-duration'>
-                  <span className='input-label'>Break Duration</span>
-                  <input 
-                    type='number' 
-                    id='break-duration' 
-                    name='break-duration' 
-                    placeholder='(mins)' 
-                    value={breakDuration} 
-                    min='1' 
-                    max='30' 
-                    required 
-                    onChange={handleBreakDurationChange}
-                    onBlur={() => setBreakDuration(prev => prev === '' ? '' : parseInt(prev))}
+              </div>
+              <div className='break-duration'>
+                <span className='input-label'>Break Duration</span>
+                <input 
+                  type='number' 
+                  id='break-duration' 
+                  name='break-duration' 
+                  placeholder='(mins)' 
+                  value={clockState.breakDuration} 
+                  min='1' 
+                  max='30' 
+                  required 
+                  onChange={handleBreakDurationChange}
                 />
-                </div><div className='total-session-count'>
+                </div>
+                <div className='total-session-count'>
                   <span className='input-label'>Session</span>
                   <input 
                     type='number' 
                     id='total-session-count' 
                     name='total-session-count' 
                     placeholder='number' 
-                    value={totalSessionCount} 
+                    value={clockState.totalSessionCount} 
                     min='1' 
                     max='100' 
                     required 
                     onChange={handleTotalSessionCountChange}
-                    onBlur={() => setTotalSessionCount(prev => prev === '' ? '' : parseInt(prev))}
                     />
-                </div></>
-            
+                </div>
+            </>
           </div>
         </div>)}
         
         <div className='timer'>
-          <CircularProgressTimer value={progressValue} remainingTime={remainingTime} sessionName={timerType}/>
+          <CircularProgressTimer value={clockState.progressValue} remainingTime={clockState.remainingTime} sessionName={clockState.timerType}/>
           <div className='session-display'>
-          {sessionCount} of {totalSessionCount} Sessions
+          {clockState.sessionCount} of {clockState.totalSessionCount} Sessions
           </div>
           <div className='timer-buttons'>
             <IconButton icon={<FontAwesomeIcon icon={faGear} size="xl"></FontAwesomeIcon>} onClick={toggleSettingsVisibility}/>
-            {timerRunning ? 
+            {clockState.timerRunning ? 
             <TimerButton icon={faPause} onClick={handleStartPauseTimer}/> : 
-            <TimerButton icon={faPlay} onClick={handleStartPauseTimer} disabled={ isSettingsEmpty || timerType === 'Complete'}/>
+            <TimerButton icon={faPlay} onClick={handleStartPauseTimer} disabled={ clockState.isSettingsEmpty || clockState.timerType === 'Complete'}/>
             }
-            <TimerButton icon={faRotateLeft} onClick={handleResetTimer} disabled={ !timerRunning }/> 
+            <TimerButton icon={faRotateLeft} onClick={handleResetTimer} disabled={ !clockState.timerRunning && clockState.sessionCount === 1 && clockState.timerType === 'Focus'}/> 
           </div>
         </div>
       </div>
   );
 }
-
-export default Clock;

@@ -14,12 +14,9 @@ const IconButton = (
             return className;
         };
     return(
-        
             <div className={getClassName()} onClick={onClick} onMouseOver={onMouseover}>           
             {icon}
             </div>
-        
-        
         );
 };
 
