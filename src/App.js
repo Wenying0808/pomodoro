@@ -4,17 +4,16 @@ import Navbar from './navbar/navbar';
 import CustomToggleButton from './toggleButton/toggleButton';
 import Clock from './clock/clock';
 import Tasks from './tasks/tasks';
-import auth, { db, provider, signInWithGoogle } from './.env/firebase';
+import auth, { db, signInWithGoogle } from './.env/firebase';
 import { onAuthStateChanged, signOut} from 'firebase/auth';
 import { getDoc, collection, doc } from 'firebase/firestore';
-
+import beepSound from './audio_BeepSound.wav';
 
 export default function App() {
   const [view, setView] = useState('clock');
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const [clockState, setClockState] = useState({
     focusDuration: 25,
     breakDuration: 5,
@@ -32,10 +31,6 @@ export default function App() {
     const minutes = Math.floor(durationInSeconds / 60);
     const seconds = durationInSeconds % 60 ;
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const handleClockStateChange = (newClockState) => {
-    setClockState(newClockState);
   };
 
   useEffect(() => {
@@ -89,6 +84,80 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // move the timer logic to app level in order to keep the timer running when the view switch to tasks
+  useEffect(() => {
+    const radius = 100;
+    let interval;
+    if (clockState.timerRunning) {
+      // Decrease remaining time every second
+      interval = setInterval(() => {
+        //create an array which contains minutes and seconds as separate string, then convert string to number by parseFloat
+        setClockState(prevState => {
+          const [minutes, seconds] = prevState.remainingTime.split(':').map(parseFloat);
+          let newMinutes = minutes;
+          let newSeconds = seconds - 1;
+          if (newSeconds < 0) {
+            newMinutes -= 1;
+            newSeconds = 59;
+          }
+          const newTime = `${newMinutes.toString().padStart(2, '0')}:${newSeconds.toString().padStart(2, '0')}`;
+          //calculate animation of circular progress
+          const duration = clockState.timerType === 'Focus' ? prevState.focusDuration : prevState.breakDuration;
+          const totalSeconds = duration * 60;
+          const circumference = 2 * Math.PI * radius
+          const progressIncrement = circumference / totalSeconds; // Calculate the increment per second to reach 1000
+          //const newProgress = progressValue + progressIncrement;
+          const newProgressValue = prevState.progressValue + progressIncrement; 
+            
+          if(newTime === '00:04'){
+            //play beep sound
+            const beepAudio = new Audio(beepSound);
+            beepAudio.play();
+          }
+          //check if the timer has reached 00:00
+          if (newTime === '00:00') {
+            
+            //change timer type
+            const nextSessionType = clockState.timerType === 'Focus' ? 'Break' : 'Focus';
+            const nextRemainingTime = nextSessionType === 'Break' 
+              ? formatTime(prevState.breakDuration * 60)
+              : formatTime(prevState.focusDuration * 60);
+
+            let newSessionCount = prevState.sessionCount;
+            if (nextSessionType === 'Focus') {
+              newSessionCount += 1;
+            }
+          
+            if (nextSessionType === 'Break' && newSessionCount === prevState.totalSessionCount) {
+              return {
+                ...prevState,
+                timerType: 'Complete',
+                remainingTime: '',
+                timerRunning: false,
+                sessionCount: newSessionCount,
+                progressValue: 0
+              };
+            }
+            return {
+              ...prevState,
+              timerType: nextSessionType,
+              remainingTime: nextRemainingTime,
+              sessionCount: newSessionCount,
+              progressValue: 0,
+              timerRunning: false
+            }; 
+          }
+          return {
+            ...prevState,
+            remainingTime: newTime,
+            progressValue: newProgressValue,
+          };
+      });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [clockState.timerRunning]);
+
   const handleLogIn = async() => {
     await signInWithGoogle();
   };
@@ -107,6 +176,10 @@ export default function App() {
     } else {
       setView('clock')
     }
+  };
+
+  const handleClockStateChange = (newClockState) => {
+    setClockState(newClockState);
   };
 
   return (
