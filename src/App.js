@@ -10,7 +10,7 @@ import { getDoc, collection, doc } from 'firebase/firestore';
 import beepSound from './audio_BeepSound.wav';
 
 export default function App() {
-  const [view, setView] = useState('clock');
+  const [view, setView] = useState('timer');
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -187,7 +187,7 @@ export default function App() {
       <Navbar isLoggedIn={isLoggedIn} onClickLogIn={handleLogIn} onClickLogOut={handleLogOut} username={username}/>
       <div className='content'>
         <CustomToggleButton value={view} onChange={handleViewChange}/>
-        {view === 'clock' ? <Clock user={user} clockState={clockState} onClockStateChange={handleClockStateChange}/>  : <Tasks/>}
+        {view === 'timer' ? <Clock user={user} clockState={clockState} onClockStateChange={handleClockStateChange}/>  : <Tasks/>}
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ const CustomToggleButton = ({value, onChange}) => {
             exclusive
         >
             <ToggleButton 
-                value="clock" 
+                value="timer" 
                 sx={{ 
                     gap:"8px",
                     color: colors.RoyalBlue,
@@ -33,7 +33,7 @@ const CustomToggleButton = ({value, onChange}) => {
                 }}
             >
                 <AlarmIcon fontSize="small"/>
-                Clock
+                Timer
             </ToggleButton>
             <ToggleButton 
                 value="tasks" 
