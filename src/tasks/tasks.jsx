@@ -3,6 +3,7 @@ import './tasks.css';
 import { colors } from '../colors/colors';
 import { v4 as uuidv4 } from 'uuid';
 import TaskCard from './taskCard';
+import PriorityButton from './priorityButton';
 import { Input, Select, MenuItem, IconButton, Chip } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDrop } from 'react-dnd';
@@ -15,10 +16,10 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
     const [numberOfProgressTask, setnumberOfProgressTask] = useState(0);
     const [numberOfDoneTask, setnumberOfDoneTask] = useState(0);
 
-    const handlePriorityChange = (event) => {
-        setNewTaskPriority(event.target.value);
+    const handlePriorityChange = (newPriority) => {
+        setNewTaskPriority(newPriority);
     };
-    const handleNmaeChange = (event) => {
+    const handleNameChange = (event) => {
         setNewTaskName(event.target.value);
     };
 
@@ -64,19 +65,14 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
         <div className="task-container">
             <div className="add-task">
                 <div className="add-task_priority-name" >
-                    <Select 
-                        size="small"
-                        value={newTaskPriority}
-                        onChange={handlePriorityChange}
-                    >
-                        <MenuItem value="high">High</MenuItem>
-                        <MenuItem value="medium">Medium</MenuItem>
-                        <MenuItem value="low">Low</MenuItem>
-                    </Select>
+                    <PriorityButton 
+                        priority={newTaskPriority} 
+                        onPriorityChange={handlePriorityChange}
+                    />
                     <Input
                         placeholder="Create a task..."
                         value={newTaskName}
-                        onChange={handleNmaeChange}
+                        onChange={handleNameChange}
                     />
                 </div>
                 <IconButton onClick={addTask} disabled={newTaskName===''}>

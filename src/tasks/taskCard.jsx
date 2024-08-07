@@ -5,8 +5,10 @@ import { Input, Select, MenuItem, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useDrag } from 'react-dnd';
+import PriorityButton from './priorityButton';
 
 export default function TaskCard({ task, onUpdate, onDelete }){
+
 
     const [{ isDragging }, dragRef] = useDrag(() => ({
         type: 'task',
@@ -16,8 +18,8 @@ export default function TaskCard({ task, onUpdate, onDelete }){
         }),
       }));
 
-    const handlePriorityChange = (event) => {
-        onUpdate({ ...task, priority: event.target.value });
+    const handlePriorityChange = (newPriority) => {
+        onUpdate({ ...task, priority: newPriority });
     };
     const handleNameChange = (event) => {
         onUpdate({ ...task, name: event.target.value });
@@ -41,15 +43,7 @@ export default function TaskCard({ task, onUpdate, onDelete }){
             }}
         >
             <div className="task-card_priority-name" >
-                <Select 
-                    size="small"
-                    value={task.priority}
-                    onChange={handlePriorityChange}
-                >
-                    <MenuItem value="high">High</MenuItem>
-                    <MenuItem value="medium">Medium</MenuItem>
-                    <MenuItem value="low">Low</MenuItem>
-                </Select>
+                <PriorityButton priority={task.priority} onPriorityChange={handlePriorityChange}/>
                 <Input
                     value={task.name}
                     onChange={handleNameChange}
@@ -64,7 +58,6 @@ export default function TaskCard({ task, onUpdate, onDelete }){
                     <CheckCircleOutlineIcon />
                 </IconButton>
                 }
-                
                 <IconButton aria-label="delete" onClick={handleTaskDelete}>
                     <DeleteIcon />
                 </IconButton>
