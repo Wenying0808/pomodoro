@@ -13,6 +13,12 @@
     padding: 10px;
     justify-content: space-between;
     align-items: center;
+    border-radius: 4px;
+    /* Task Card*/
+    box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.1);
+}
+.add-task:hover{
+    box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.1);
 }
 
 .add-task_priority-name{
