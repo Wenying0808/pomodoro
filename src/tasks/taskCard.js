@@ -37,9 +37,15 @@ export default function TaskCard({ task, onUpdate, onDelete }){
                 />
             </div>
             <div className="task-card_actions" >
+                {task.status === 'done' 
+                ? 
+                ""
+                : 
                 <IconButton aria-label="complete" onClick={handleTaskComplete}>
                     <CheckCircleOutlineIcon />
                 </IconButton>
+                }
+                
                 <IconButton aria-label="delete" onClick={handleTaskDelete}>
                     <DeleteIcon />
                 </IconButton>
