@@ -202,10 +202,10 @@ export default function App() {
   };
 
   const handleViewChange = () => {
-    if (view === 'clock') {
+    if (view === 'timer') {
       setView('tasks')
     } else {
-      setView('clock')
+      setView('timer')
     }
   };
 

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import TaskCard from './taskCard';
 import { Input, Select, MenuItem, IconButton, Chip } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useDrop } from 'react-dnd';
 
 export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
 
@@ -35,8 +36,23 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
     };
 
     const updateTask = (updatedTask) => {
-        setTasks({ ...tasks, [updatedTask.id]: updatedTask})
+        setTasks((prevTasks) => ({ ...prevTasks, [updatedTask.id]: updatedTask }));
     };
+
+    const [, dropTodo] = useDrop(() => ({
+        accept: 'task',
+        drop: (item) => updateTask({ ...tasks[item.id], status: 'todo' }),
+    }));
+    
+    const [, dropInProgress] = useDrop(() => ({
+    accept: 'task',
+    drop: (item) => updateTask({ ...tasks[item.id], status: 'inProgress' }),
+    }));
+    
+    const [, dropDone] = useDrop(() => ({
+    accept: 'task',
+    drop: (item) => updateTask({ ...tasks[item.id], status: 'done' }),
+    }));
 
     const deleteTask = (taskId) => {
         const updatedTasks = {...tasks};
@@ -45,7 +61,7 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
     };
 
     return(
-        <div className="container">
+        <div className="task-container">
             <div className="add-task">
                 <div className="add-task_priority-name" >
                     <Select 
@@ -76,10 +92,10 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
                         <Chip label={numberOfTodoTask.toString()} size="small"/>
                     </div>
                     
-                    <div className="section_tasks-list">
+                    <div className="section_tasks-list" ref={dropTodo}>
                         {Object.values(tasks)
                             .filter((tasks) => tasks.status === 'todo')
-                            .map(task => (
+                            .map((task) => (
                                 <TaskCard 
                                     key={task.id}
                                     task={task}
@@ -98,10 +114,10 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
                         <Chip label={numberOfProgressTask.toString()} size="small"/>
                     </div>
                     
-                    <div className="section_tasks-list">
+                    <div className="section_tasks-list"  ref={dropInProgress}>
                         {Object.values(tasks)
-                            .filter((tasks) => tasks.status === 'in progress')
-                            .map(task => (
+                            .filter((tasks) => tasks.status === 'inProgress')
+                            .map((task) => (
                                 <TaskCard 
                                     key={task.id}
                                     task={task}
@@ -119,10 +135,10 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
                         </div>
                         <Chip label={numberOfDoneTask.toString()} size="small"/>
                     </div>
-                    <div className="section_tasks-list">
+                    <div className="section_tasks-list"  ref={dropDone}>
                         {Object.values(tasks)
                             .filter((tasks) => tasks.status === 'done')
-                            .map(task => (
+                            .map((task) => (
                                 <TaskCard 
                                     key={task.id}
                                     task={task}
