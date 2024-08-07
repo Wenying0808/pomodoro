@@ -1,7 +1,58 @@
 .container{
-    box-sizing: border-box;
     display: flex;
-    flex-direction: row;
-    width: 100%;
+    flex-direction: column;
+    width: 100vw;
     height: calc(100% - 62px);
+    align-items: center;
+    margin-top: 20px;
+}
+
+.add-task{
+    display: flex;
+    width: 300px;
+    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-task_priority-name{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    flex: 1 0 0;
+}
+.sections{
+    display: flex;
+    padding: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    align-self: stretch;
+}
+.section{
+    display: flex;
+    padding: 10px;
+    min-width: 360px;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 10px;
+    background: var(--Gallery, #EFEFEF);
+}
+.section_header{
+    display: flex;
+    padding: 10px;
+    
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.section_tasks-list{
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
 }

@@ -8,6 +8,8 @@ import auth, { db, signInWithGoogle } from './.env/firebase';
 import { onAuthStateChanged, signOut} from 'firebase/auth';
 import { getDoc, collection, doc } from 'firebase/firestore';
 import beepSound from './audio_BeepSound.wav';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 export default function App() {
   const [view, setView] = useState('timer');
@@ -26,11 +28,32 @@ export default function App() {
     isSettingsEmpty: false,
     isSettingsVisible: false,
   });
+  const [tasks, setTasks] = useState({});
 
   const formatTime = (durationInSeconds) => {
     const minutes = Math.floor(durationInSeconds / 60);
     const seconds = durationInSeconds % 60 ;
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const fetchTasks = async() => {
+    if (!user) return;
+
+    try{
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        setTasks(userData.tasks || {});
+      } else {
+        // when user doc doesn't exist
+        setTasks({});
+      }
+
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      setTasks({});
+    }
   };
 
   useEffect(() => {
@@ -39,6 +62,8 @@ export default function App() {
       console.log('currentUser', currentUser);
 
       setIsLoggedIn(!!currentUser);
+
+      // when user is logged in
       if (currentUser) {
         setUsername(currentUser.displayName);
 
@@ -47,6 +72,7 @@ export default function App() {
           const usersCollectionRef = collection(db, 'users');
           const userDocRef = doc(usersCollectionRef, currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
+
           if(userDocSnap.exists) {
             console.log('userDocSnap', userDocSnap);
             // fetch data
@@ -70,14 +96,19 @@ export default function App() {
               // Update remainingTime based on fetched focusDuration
               remainingTime: formatTime(parseInt(clockSettingsDataFocusDuration * 60)),
             });
+
+            // fetch task from firestore
+            await fetchTasks();
           }
 
         } catch (error) {
           console.error("Error fetching clock settings:", error);
         }
 
+      // when the user is not logged in
       } else {
         setUsername(null);
+        setTasks([]);
       }
     });
 
@@ -187,7 +218,12 @@ export default function App() {
       <Navbar isLoggedIn={isLoggedIn} onClickLogIn={handleLogIn} onClickLogOut={handleLogOut} username={username}/>
       <div className='content'>
         <CustomToggleButton value={view} onChange={handleViewChange}/>
-        {view === 'timer' ? <Clock user={user} clockState={clockState} onClockStateChange={handleClockStateChange}/>  : <Tasks/>}
+        { view === 'timer' 
+          ? <Clock user={user} clockState={clockState} onClockStateChange={handleClockStateChange}/>  
+          : <DndProvider backend={HTML5Backend}>
+              <Tasks user={user} isLoggedIn={isLoggedIn} tasks={tasks} setTasks={setTasks}/>
+            </DndProvider>
+        }
       </div>
     </div>
   );
