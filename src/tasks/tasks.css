@@ -31,14 +31,14 @@
 .sections{
     display: flex;
     flex-direction: row;
-    flex: 1;
+    height: calc(100% - 138px);
     padding: 20px;
     justify-content: center;
     align-items: flex-start;
     gap: 20px;
-    align-self: stretch;
 }
 .section{
+    box-sizing: border-box;
     display: flex;
     flex: 1;
     padding: 10px;
@@ -52,7 +52,6 @@
 .section_header{
     display: flex;
     padding: 10px;
-    
     justify-content: space-between;
     align-items: center;
     align-self: stretch;
@@ -66,4 +65,5 @@
     gap: 10px;
     align-items: flex-start;
     align-self: stretch;
+    overflow-y: auto;
 }
