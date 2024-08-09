@@ -71,6 +71,9 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
         const newOrder = [...sourceList];
         const sourceIndex = newOrder.indexOf(sourceId);
         const destinationIndex = newOrder.indexOf(destinationId);
+        
+        if (sourceIndex === -1 || destinationIndex === -1) return;
+
         // remove from sourceIndex
         newOrder.splice(sourceIndex, 1);
         // insert it into destinationIndex
@@ -78,11 +81,66 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
         setSourceList(newOrder);
     };
 
+    /*
+    const moveTask = (taskId, dragIndex, hoverIndex, sourceStatus, targetStatus) => {
+        let sourceOrder, setSourceOrder, targetOrder, setTargetOrder;
+        if (sourceStatus === 'todo'){
+            sourceOrder = todoOrder;
+            setSourceOrder = setTodoOrder;
+        } else if (sourceStatus === "inProgress") {
+            sourceOrder = inProgressOrder;
+            setSourceOrder = setInProgressOrder;
+        } else {
+            sourceOrder = doneOrder;
+            setSourceOrder = setDoneOrder;
+        }
+        if (targetStatus === 'todo'){
+            targetOrder = todoOrder;
+            setTargetOrder = setTodoOrder;
+        } else if (targetStatus === "inProgress") {
+            targetOrder = inProgressOrder;
+            setTargetOrder = setInProgressOrder;
+        } else {
+            targetOrder = doneOrder;
+            setTargetOrder = setDoneOrder;
+        }
+        if (sourceStatus === targetStatus && dragIndex === hoverIndex) return;
+        // move within the same section
+
+        const dragTask = sourceOrder[dragIndex];
+
+        if (sourceStatus === targetStatus){
+            const newOrder = [...sourceOrder];
+            newOrder.splice(dragIndex, 1); // remove
+            newOrder.splice(hoverIndex, 0, dragTask); // insert
+            setSourceOrder(newOrder);
+        } else {
+        // move across sections
+            const newSourceOrder = [...sourceOrder];
+            const newTargetOrder = [...targetOrder];
+            newSourceOrder.splice(dragIndex, 1); // remove
+            newTargetOrder.splice(hoverIndex, 0, dragTask); // insert
+            setSourceOrder(newSourceOrder);
+            setTargetOrder(newTargetOrder);
+            updateTask({ ...tasks[taskId], status: targetStatus });
+        }
+    };
+    */
+
+
+    
     const [, dropTodo] = useDrop(() => ({
         accept: 'task',
-        drop: (item, monitor) => {
+        hover: (item, monitor) => {
+            const draggedId = item.id;
+            const overId = monitor.getItem().id;         
+            if (draggedId === overId) return;
+            if (item.status === 'todo') {
+                reorderTasks(draggedId, overId, todoOrder, setTodoOrder);
+            }
+        },
+        drop: (item) => {
             const sourceId = item.id;
-            const destinationId = monitor.getItem().id;
             // move from other sections to todo Section
             if (item.status !== "todo"){
                 updateTask({ ...tasks[item.id], status: 'todo' });
@@ -93,19 +151,22 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
                     setDoneOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
                 }
             }
-            // reorder within the todo section
-            else if (sourceId !== destinationId) {
-                reorderTasks(sourceId, destinationId, todoOrder, setTodoOrder);
-            }
         },
     }));
     
     const [, dropInProgress] = useDrop(() => ({
         accept: 'task',
-        drop: (item, monitor) => {
+        hover: (item, monitor) => {
+            const draggedId = item.id;
+            const overId = monitor.getItem().id;         
+            if (draggedId === overId) return;
+            if (item.status === 'inProgress') {
+                reorderTasks(draggedId, overId, inProgressOrder, setInProgressOrder);
+            }
+        },
+        drop: (item) => {
             const sourceId = item.id;
-            const destinationId = monitor.getItem().id;
-            // move from other sections to inProgress Section
+            // move from other sections to todo Section
             if (item.status !== "inProgress"){
                 updateTask({ ...tasks[item.id], status: 'inProgress' });
                 setInProgressOrder((prevOrder => [...prevOrder, sourceId]));
@@ -115,19 +176,22 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
                     setDoneOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
                 }
             }
-            // reorder within the inProgress section
-            else if (sourceId !== destinationId) {
-                reorderTasks(sourceId, destinationId, inProgressOrder, setInProgressOrder);
-            }
         },
     }));
     
     const [, dropDone] = useDrop(() => ({
         accept: 'task',
-        drop: (item, monitor) => {
+        hover: (item, monitor) => {
+            const draggedId = item.id;
+            const overId = monitor.getItem().id;         
+            if (draggedId === overId) return;
+            if (item.status === 'done') {
+                reorderTasks(draggedId, overId, doneOrder, setDoneOrder);
+            }
+        },
+        drop: (item) => {
             const sourceId = item.id;
-            const destinationId = monitor.getItem().id;
-            // move from other sections to done Section
+            // move from other sections to todo Section
             if (item.status !== "done"){
                 updateTask({ ...tasks[item.id], status: 'done' });
                 setDoneOrder((prevOrder => [...prevOrder, sourceId]));
@@ -136,10 +200,6 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
                 } else if (item.status === "inProgress"){
                     setInProgressOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
                 }
-            }
-            // reorder within the done section
-            else if (sourceId !== destinationId) {
-                reorderTasks(sourceId, destinationId, doneOrder, setDoneOrder);
             }
         },
     }));

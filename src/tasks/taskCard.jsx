@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './taskCard.css';
 import { colors } from '../colors/colors';
-import { Input, Select, MenuItem, IconButton } from '@mui/material';
+import { Input, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useDrag } from 'react-dnd';
@@ -9,14 +9,13 @@ import PriorityButton from './priorityButton';
 
 export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
 
-
     const [{ isDragging }, dragRef] = useDrag(() => ({
         type: 'task',
-        item: { ...task },
+        item: { id: task.id, status: task.status }, 
         collect: (monitor) => ({
-          isDragging: !!monitor.isDragging(),
+            isDragging: !!monitor.isDragging(),
         }),
-      }));
+    }));
 
     const handlePriorityChange = (newPriority) => {
         onUpdate({ ...task, priority: newPriority });
