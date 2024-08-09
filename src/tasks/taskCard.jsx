@@ -7,7 +7,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useDrag } from 'react-dnd';
 import PriorityButton from './priorityButton';
 
-export default function TaskCard({ task, onUpdate, onDelete }){
+export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
 
 
     const [{ isDragging }, dragRef] = useDrag(() => ({
@@ -28,7 +28,7 @@ export default function TaskCard({ task, onUpdate, onDelete }){
         onDelete(task.id)
     };
     const handleTaskComplete = () => {
-        onUpdate({ ...task, status: 'done' });
+        onComplete(task.id);
     };
 
     return (
