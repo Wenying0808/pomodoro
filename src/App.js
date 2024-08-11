@@ -64,7 +64,7 @@ export default function App() {
             doneDefaultOrder.push(taskDoc.id);
         }
       });
-      console.log("fetch tasks data", tasksData)
+      console.log("fetch tasks data", tasksData);
 
       setTasks(tasksData);
       setTodoOrder(todoDefaultOrder);
@@ -74,12 +74,11 @@ export default function App() {
       console.log("tasks", tasks);
 
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error fetching tasks from firestore:", error);
       setTasks({});
     }
   };
 
-  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
@@ -121,11 +120,7 @@ export default function App() {
               // Update remainingTime based on fetched focusDuration
               remainingTime: formatTime(parseInt(clockSettingsDataFocusDuration * 60)),
             });
-
-            // fetch task from firestore
-            await fetchTasks();
           }
-
         } catch (error) {
           console.error("Error fetching clock settings:", error);
         }
@@ -140,6 +135,11 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      fetchTasks();
+    }
+  }, [user]);
 
   // move the timer logic to app level in order to keep the timer running when the view switch to tasks
   useEffect(() => {

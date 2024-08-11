@@ -225,6 +225,24 @@ export default function Tasks({
         }
     };
 
+    const renderTaskCards = (orderList) => {
+        return orderList.map((taskId) => {
+          const task = tasks[taskId];
+          if (!task) {
+            return <div key={taskId}></div>; // Handle missing task data
+          }
+          return (
+            <TaskCard
+              key={taskId}
+              task={task}
+              onUpdate={updateTask}
+              onDelete={deleteTask}
+              onComplete={completeTask}
+            />
+          );
+        });
+      };
+
     return(
         <div className="task-container">
             <div className="add-task">
@@ -253,15 +271,7 @@ export default function Tasks({
                     </div>
                     
                     <div className="section_tasks-list" ref={dropTodo}>
-                        {todoOrder.map((taskId) => (
-                            <TaskCard 
-                                key={taskId}
-                                task={tasks[taskId]}
-                                onUpdate={updateTask}
-                                onDelete={deleteTask}
-                                onComplete={completeTask}
-                            />
-                        ))}
+                        {renderTaskCards(todoOrder)}
                     </div>                    
                 </div>
                 <div className="section inProgress-section">
@@ -273,15 +283,7 @@ export default function Tasks({
                     </div>
                     
                     <div className="section_tasks-list"  ref={dropInProgress}>
-                        {inProgressOrder.map((taskId) => (
-                            <TaskCard 
-                                key={taskId}
-                                task={tasks[taskId]}
-                                onUpdate={updateTask}
-                                onDelete={deleteTask}
-                                onComplete={completeTask}
-                            />
-                        ))}
+                        {renderTaskCards(inProgressOrder)}
                     </div>               
                 </div>
                 <div className="section done-section">
@@ -292,15 +294,7 @@ export default function Tasks({
                         <Chip label={numberOfDoneTask.toString()} size="small"/>
                     </div>
                     <div className="section_tasks-list"  ref={dropDone}>
-                        {doneOrder.map((taskId) => (
-                            <TaskCard 
-                                key={taskId}
-                                task={tasks[taskId]}
-                                onUpdate={updateTask}
-                                onDelete={deleteTask}
-                                onComplete={completeTask}
-                            />
-                        ))}
+                        {renderTaskCards(doneOrder)}
                     </div>                    
                 </div>
             </div>

@@ -33,7 +33,6 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
     return (
         <div 
             className="task-card" 
-            id={task.id}
             ref={dragRef}
             style={{
                 opacity: isDragging ? 0.5 : 1,
