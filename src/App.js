@@ -6,7 +6,7 @@ import Clock from './clock/clock';
 import Tasks from './tasks/tasks';
 import auth, { db, signInWithGoogle } from './.env/firebase';
 import { onAuthStateChanged, signOut} from 'firebase/auth';
-import { getDoc, collection, doc } from 'firebase/firestore';
+import { getDoc, getDocs, collection, doc } from 'firebase/firestore';
 import beepSound from './audio_BeepSound.wav';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -29,6 +29,9 @@ export default function App() {
     isSettingsVisible: false,
   });
   const [tasks, setTasks] = useState({});
+  const [todoOrder, setTodoOrder] = useState([]);
+  const [inProgressOrder, setInProgressOrder] = useState([]);
+  const [doneOrder, setDoneOrder] = useState([]);
 
   const formatTime = (durationInSeconds) => {
     const minutes = Math.floor(durationInSeconds / 60);
@@ -41,20 +44,42 @@ export default function App() {
 
     try{
       const userDocRef = doc(db, 'users', user.uid);
-      const userDocSnap = await getDoc(userDocRef);
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-        setTasks(userData.tasks || {});
-      } else {
-        // when user doc doesn't exist
-        setTasks({});
-      }
+      const tasksCollectionRef = collection(userDocRef, "tasks");
+      // Fetch all documents in the tasks subcollection
+      const tasksQuerySnapshot = await getDocs(tasksCollectionRef);
+      console.log("fetch tasks tasksQuerySnapshot", tasksQuerySnapshot)
+
+      const tasksData = {};
+      const todoDefaultOrder = [];
+      const inProgressDefaultOrder = [];
+      const doneDefaultOrder = [];
+
+      tasksQuerySnapshot.forEach((taskDoc) => {
+        tasksData[taskDoc.id] = taskDoc.data();
+        if (taskDoc.data().status === 'todo') {
+          todoDefaultOrder.push(taskDoc.id);
+        } else if (taskDoc.data().status === 'inProgress') {
+            inProgressDefaultOrder.push(taskDoc.id);
+        } else if (taskDoc.data().status === 'done') {
+            doneDefaultOrder.push(taskDoc.id);
+        }
+      });
+      console.log("fetch tasks data", tasksData)
+
+      setTasks(tasksData);
+      setTodoOrder(todoDefaultOrder);
+      setInProgressOrder(inProgressDefaultOrder);
+      setDoneOrder(doneDefaultOrder);
+
+      console.log("tasks", tasks);
 
     } catch (error) {
       console.error("Error fetching tasks:", error);
       setTasks({});
     }
   };
+
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async(currentUser) => {
@@ -114,6 +139,7 @@ export default function App() {
 
     return () => unsubscribe();
   }, []);
+
 
   // move the timer logic to app level in order to keep the timer running when the view switch to tasks
   useEffect(() => {
@@ -221,7 +247,17 @@ export default function App() {
         { view === 'timer' 
           ? <Clock user={user} clockState={clockState} onClockStateChange={handleClockStateChange}/>  
           : <DndProvider backend={HTML5Backend}>
-              <Tasks user={user} isLoggedIn={isLoggedIn} tasks={tasks} setTasks={setTasks}/>
+              <Tasks 
+                user={user} 
+                tasks={tasks} 
+                setTasks={setTasks}
+                todoOrder={todoOrder} 
+                inProgressOrder={inProgressOrder} 
+                doneOrder={doneOrder} 
+                setTodoOrder={setTodoOrder}
+                setInProgressOrder={setInProgressOrder}
+                setDoneOrder={setDoneOrder}
+                />
             </DndProvider>
         }
       </div>

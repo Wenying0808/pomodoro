@@ -11,7 +11,7 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
 
     const [{ isDragging }, dragRef] = useDrag(() => ({
         type: 'task',
-        item: { id: task.id, status: task.status }, 
+        item: { id: task.id, status: task.status, name: task.name, priority: task.priority }, 
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),

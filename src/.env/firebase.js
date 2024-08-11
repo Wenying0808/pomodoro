@@ -39,7 +39,6 @@ const signInWithGoogle = async() => {
         uid: user.uid,
         name: user.displayName,
         email: user.email,
-        tasks: {},
         clock: {
           focusDuration: 25, 
           breakDuration: 5,  

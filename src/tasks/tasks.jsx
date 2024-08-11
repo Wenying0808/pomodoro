@@ -7,15 +7,23 @@ import PriorityButton from './priorityButton';
 import { Input, IconButton, Chip } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDrop } from 'react-dnd';
+import { collection, doc, updateDoc, deleteDoc, runTransaction } from 'firebase/firestore';
+import { db } from '../.env/firebase';
 
-export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
+export default function Tasks({ 
+    user, 
+    tasks, 
+    setTasks, 
+    todoOrder, 
+    inProgressOrder, 
+    doneOrder,
+    setTodoOrder,
+    setInProgressOrder,
+    setDoneOrder  
+}) {
 
     const [newTaskPriority, setNewTaskPriority] = useState('low');
     const [newTaskName, setNewTaskName] = useState('');
-
-    const [todoOrder, setTodoOrder] = useState([]);
-    const [inProgressOrder, setInProgressOrder] = useState([]);
-    const [doneOrder, setDoneOrder] = useState([]);
 
     const [numberOfTodoTask, setnumberOfTodoTask] = useState(0);
     const [numberOfProgressTask, setnumberOfProgressTask] = useState(0);
@@ -27,6 +35,8 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
         setnumberOfDoneTask(doneOrder.length);
     }, [todoOrder, inProgressOrder, doneOrder]);
 
+    console.log ("initial to do order in tasks file", todoOrder);
+
     const handlePriorityChange = (newPriority) => {
         setNewTaskPriority(newPriority);
     };
@@ -34,7 +44,7 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
         setNewTaskName(event.target.value);
     };
 
-    const addTask = () => {
+    const addTask = async () => {
         const newTaskId = uuidv4();
         const newTask = {
             id: newTaskId ,
@@ -42,30 +52,65 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
             priority: newTaskPriority,
             status: 'todo'
         }
-        setTasks({ ...tasks, [newTaskId]: newTask })
-        setNewTaskName('');
-        setNewTaskPriority('low');
-        setTodoOrder((prevOrder) => [newTaskId, ...prevOrder]); // Add to todoOrder
+        // add a task doc in firestore
+        try {
+            // get the clock collection under usercollection
+            await runTransaction(db, async (transaction) => {
+                const userDocRef = doc(db, "users", user.uid);
+                const tasksCollectionRef = collection(userDocRef, "tasks");
+                const taskDocRef = doc(tasksCollectionRef, newTaskId);
+                transaction.set(taskDocRef, newTask);
+                setTasks(prevTasks => ({ ...prevTasks, [newTaskId]: newTask }));
+                setNewTaskName('');
+                setNewTaskPriority('low');
+                setTodoOrder(prevOrder => [newTaskId, ...prevOrder]);
+            });
+        } catch (error) {
+            console.error('Error adding task in firestore:', error);
+        }
     };
 
-    const updateTask = (updatedTask) => {
-        setTasks((prevTasks) => ({ ...prevTasks, [updatedTask.id]: updatedTask }));
+    const updateTask = async(updatedTask) => {
+        try {
+            console.log('Updating task:', updatedTask); 
+
+            if (!updatedTask.id) {
+                console.error('Task ID is missing');
+                return;
+            }
+             // Create a reference to the specific task document using its ID
+            const userDocRef = doc(db, "users", user.uid);
+            const tasksCollectionRef = collection(userDocRef, "tasks");
+            const taskDocRef = doc(tasksCollectionRef, updatedTask.id);
+
+            const updatedData = {
+                id: updatedTask.id,
+                name: updatedTask.name,
+                priority: updatedTask.priority,
+                status: updatedTask.status,
+            }
+
+            await updateDoc(taskDocRef, updatedData);
+
+            setTasks((prevTasks) => ({ ...prevTasks, [updatedTask.id]: updatedTask }));
+            console.log(`Task ${updatedTask.id} updated successfully`);
+        } catch (error) {
+            console.error('Error updating task in firestore:', error);
+        }
     };
 
-    const completeTask = (taskId) => {
+    const completeTask = async (taskId) => {
         const task = tasks[taskId];
         const updatedTask = {...task, status: "done"};
+        await updateTask(updatedTask);
         setTasks({ ...tasks, [taskId]: updatedTask });
-
         if (task.status === "todo"){
             setTodoOrder(prevOrder => prevOrder.filter(id => id !== taskId));
         } else if (task.status === "inProgress"){
             setInProgressOrder(prevOrder => prevOrder.filter(id => id !== taskId));
-        }
-
+        }    
         setDoneOrder(prevOrder => [taskId, ...prevOrder]);
     };
-   
 
     const reorderTasks = (sourceId, destinationId, sourceList, setSourceList) => {
         const newOrder = [...sourceList];
@@ -80,55 +125,7 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
         newOrder.splice(destinationIndex, 0, sourceId);
         setSourceList(newOrder);
     };
-
-    /*
-    const moveTask = (taskId, dragIndex, hoverIndex, sourceStatus, targetStatus) => {
-        let sourceOrder, setSourceOrder, targetOrder, setTargetOrder;
-        if (sourceStatus === 'todo'){
-            sourceOrder = todoOrder;
-            setSourceOrder = setTodoOrder;
-        } else if (sourceStatus === "inProgress") {
-            sourceOrder = inProgressOrder;
-            setSourceOrder = setInProgressOrder;
-        } else {
-            sourceOrder = doneOrder;
-            setSourceOrder = setDoneOrder;
-        }
-        if (targetStatus === 'todo'){
-            targetOrder = todoOrder;
-            setTargetOrder = setTodoOrder;
-        } else if (targetStatus === "inProgress") {
-            targetOrder = inProgressOrder;
-            setTargetOrder = setInProgressOrder;
-        } else {
-            targetOrder = doneOrder;
-            setTargetOrder = setDoneOrder;
-        }
-        if (sourceStatus === targetStatus && dragIndex === hoverIndex) return;
-        // move within the same section
-
-        const dragTask = sourceOrder[dragIndex];
-
-        if (sourceStatus === targetStatus){
-            const newOrder = [...sourceOrder];
-            newOrder.splice(dragIndex, 1); // remove
-            newOrder.splice(hoverIndex, 0, dragTask); // insert
-            setSourceOrder(newOrder);
-        } else {
-        // move across sections
-            const newSourceOrder = [...sourceOrder];
-            const newTargetOrder = [...targetOrder];
-            newSourceOrder.splice(dragIndex, 1); // remove
-            newTargetOrder.splice(hoverIndex, 0, dragTask); // insert
-            setSourceOrder(newSourceOrder);
-            setTargetOrder(newTargetOrder);
-            updateTask({ ...tasks[taskId], status: targetStatus });
-        }
-    };
-    */
-
-
-    
+ 
     const [, dropTodo] = useDrop(() => ({
         accept: 'task',
         hover: (item, monitor) => {
@@ -143,7 +140,8 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
             const sourceId = item.id;
             // move from other sections to todo Section
             if (item.status !== "todo"){
-                updateTask({ ...tasks[item.id], status: 'todo' });
+                const updatedTask = { ...item, status: 'todo' };
+                updateTask(updatedTask);
                 setTodoOrder((prevOrder => [...prevOrder, sourceId]));
                 if (item.status === "inProgress"){
                     setInProgressOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
@@ -168,7 +166,8 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
             const sourceId = item.id;
             // move from other sections to todo Section
             if (item.status !== "inProgress"){
-                updateTask({ ...tasks[item.id], status: 'inProgress' });
+                const updatedTask = { ...item, status: 'inProgress' };
+                updateTask(updatedTask);
                 setInProgressOrder((prevOrder => [...prevOrder, sourceId]));
                 if (item.status === "todo"){
                     setTodoOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
@@ -193,7 +192,8 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
             const sourceId = item.id;
             // move from other sections to todo Section
             if (item.status !== "done"){
-                updateTask({ ...tasks[item.id], status: 'done' });
+                const updatedTask = { ...item, status: 'done' };
+                updateTask(updatedTask);
                 setDoneOrder((prevOrder => [...prevOrder, sourceId]));
                 if (item.status === "todo"){
                     setTodoOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
@@ -204,14 +204,25 @@ export default function Tasks({ user, isLoggeIn, tasks, setTasks }) {
         },
     }));
 
-    const deleteTask = (taskId) => {
-        const updatedTasks = {...tasks};
-        delete updatedTasks[taskId];
-        setTasks(updatedTasks);
-        // remove the tasks from order list
-        setTodoOrder(prevOrder => prevOrder.filter(id => id !== taskId));
-        setInProgressOrder(prevOrder => prevOrder.filter(id => id !== taskId));
-        setDoneOrder(prevOrder => prevOrder.filter(id => id !== taskId));
+    const deleteTask = async(taskId) => {
+        try {
+             // Delete task from Firestore
+            const userRef = doc (db, 'users', user.uid);
+            const tasksCollectionRef = collection(userRef, 'tasks')
+            const taskRef = doc(tasksCollectionRef , taskId); // Replace 'tasks' with your collection name
+            await deleteDoc(taskRef);
+
+            const updatedTasks = {...tasks};
+            delete updatedTasks[taskId];
+            setTasks(updatedTasks);
+            // remove the tasks from order list
+            setTodoOrder(prevOrder => prevOrder.filter(id => id !== taskId));
+            setInProgressOrder(prevOrder => prevOrder.filter(id => id !== taskId));
+            setDoneOrder(prevOrder => prevOrder.filter(id => id !== taskId));
+
+        } catch (error) {
+            console.log('Error deleting a task in firestore', error)
+        }
     };
 
     return(
