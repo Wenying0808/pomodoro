@@ -264,7 +264,7 @@ export default function Tasks({
             <div className="sections">
                 <div className="section todo-section">
                     <div className="section_header">
-                        <div>
+                        <div className="section_header_title">
                             Todo
                         </div>
                         <Chip label={numberOfTodoTask.toString()} size="small"/>
@@ -276,7 +276,7 @@ export default function Tasks({
                 </div>
                 <div className="section inProgress-section">
                 <div className="section_header">
-                        <div>
+                        <div className="section_header_title">
                             In Progress
                         </div>
                         <Chip label={numberOfProgressTask.toString()} size="small"/>
@@ -288,7 +288,7 @@ export default function Tasks({
                 </div>
                 <div className="section done-section">
                     <div className="section_header">
-                        <div>
+                        <div className="section_header_title">
                             Done
                         </div>
                         <Chip label={numberOfDoneTask.toString()} size="small"/>
