@@ -4,7 +4,7 @@ import { colors } from '../colors/colors';
 import { v4 as uuidv4 } from 'uuid';
 import TaskCard from './taskCard';
 import PriorityButton from './priorityButton';
-import { Input, IconButton, Chip } from '@mui/material';
+import { Input, IconButton, Chip, Tooltip } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDrop } from 'react-dnd';
 import { collection, doc, updateDoc, deleteDoc, runTransaction } from 'firebase/firestore';
@@ -257,9 +257,12 @@ export default function Tasks({
                         onChange={handleNameChange}
                     />
                 </div>
-                <IconButton onClick={addTask} disabled={newTaskName===''}>
-                    <AddCircleIcon/>
-                </IconButton>
+                <Tooltip title="Add Task" placement="top" arrow>
+                    <IconButton onClick={addTask} disabled={newTaskName===''}>
+                        <AddCircleIcon/>
+                    </IconButton>
+                </Tooltip>
+               
             </div>
             <div className="sections">
                 <div className="section todo-section">

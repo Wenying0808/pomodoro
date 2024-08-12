@@ -1,7 +1,7 @@
 import React from 'react';
 import './taskCard.css';
 import { colors } from '../colors/colors';
-import { Input, IconButton } from '@mui/material';
+import { Input, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useDrag } from 'react-dnd';
@@ -52,13 +52,19 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
                 ? 
                 ""
                 : 
-                <IconButton aria-label="complete" onClick={handleTaskComplete}>
-                    <CheckCircleOutlineIcon />
-                </IconButton>
+                <Tooltip title="Mark As Complete" placement="top" arrow>
+                    <IconButton aria-label="complete" onClick={handleTaskComplete}>
+                        <CheckCircleOutlineIcon />
+                    </IconButton>
+                </Tooltip>
+                
                 }
-                <IconButton aria-label="delete" onClick={handleTaskDelete}>
-                    <DeleteIcon />
-                </IconButton>
+                <Tooltip title="Delete Task" placement="top" arrow>
+                    <IconButton aria-label="delete" onClick={handleTaskDelete}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+               
             </div>
         </div>
     );
