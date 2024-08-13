@@ -6,9 +6,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useDrag } from 'react-dnd';
 import PriorityButton from './priorityButton';
+import CustomInput from '../input/cutomInput';
 
 export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
-
+    
     const [{ isDragging }, dragRef] = useDrag(() => ({
         type: 'task',
         item: { id: task.id, status: task.status, name: task.name, priority: task.priority }, 
@@ -42,9 +43,9 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
         >
             <div className="task-card_priority-name" >
                 <PriorityButton priority={task.priority} onPriorityChange={handlePriorityChange}/>
-                <Input
-                    value={task.name}
-                    onChange={handleNameChange}
+                <CustomInput
+                value={task.name}
+                onChange={handleNameChange}
                 />
             </div>
             <div className="task-card_actions" >

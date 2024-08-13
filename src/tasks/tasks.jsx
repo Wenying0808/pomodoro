@@ -4,6 +4,7 @@ import { colors } from '../colors/colors';
 import { v4 as uuidv4 } from 'uuid';
 import TaskCard from './taskCard';
 import PriorityButton from './priorityButton';
+import CustomInput from '../input/cutomInput';
 import { Input, IconButton, Chip, Tooltip } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDrop } from 'react-dnd';
@@ -251,7 +252,7 @@ export default function Tasks({
                         priority={newTaskPriority} 
                         onPriorityChange={handlePriorityChange}
                     />
-                    <Input
+                    <CustomInput
                         placeholder="Create a task..."
                         value={newTaskName}
                         onChange={handleNameChange}
