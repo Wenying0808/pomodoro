@@ -1,7 +1,8 @@
 import React from 'react';
 import './taskCard.css';
 import { colors } from '../colors/colors';
-import { Input, IconButton, Tooltip } from '@mui/material';
+import { IconButton } from '@mui/material';
+import CustomTooltip from '../Tooltip/customTooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useDrag } from 'react-dnd';
@@ -53,18 +54,18 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
                 ? 
                 ""
                 : 
-                <Tooltip title="Mark As Complete" placement="top" arrow>
+                <CustomTooltip title="Mark As Complete" placement="top" arrow>
                     <IconButton aria-label="complete" onClick={handleTaskComplete}>
                         <CheckCircleOutlineIcon />
                     </IconButton>
-                </Tooltip>
+                </CustomTooltip>
                 
                 }
-                <Tooltip title="Delete Task" placement="top" arrow>
+                <CustomTooltip title="Delete Task">
                     <IconButton aria-label="delete" onClick={handleTaskDelete}>
-                        <DeleteIcon />
+                            <DeleteIcon />
                     </IconButton>
-                </Tooltip>
+                </CustomTooltip>
                
             </div>
         </div>

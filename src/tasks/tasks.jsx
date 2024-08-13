@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import TaskCard from './taskCard';
 import PriorityButton from './priorityButton';
 import CustomInput from '../input/cutomInput';
-import { Input, IconButton, Chip, Tooltip } from '@mui/material';
+import { IconButton, Chip } from '@mui/material';
+import CustomTooltip from '../Tooltip/customTooltip';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDrop } from 'react-dnd';
 import { collection, doc, updateDoc, deleteDoc, runTransaction } from 'firebase/firestore';
@@ -258,11 +259,11 @@ export default function Tasks({
                         onChange={handleNameChange}
                     />
                 </div>
-                <Tooltip title="Add Task" placement="top" arrow>
+                <CustomTooltip title="Add Task" placement="top" arrow>
                     <IconButton onClick={addTask} disabled={newTaskName===''}>
                         <AddCircleIcon/>
                     </IconButton>
-                </Tooltip>
+                </CustomTooltip>
                
             </div>
             <div className="sections">
