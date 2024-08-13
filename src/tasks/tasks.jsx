@@ -4,7 +4,9 @@ import { colors } from '../colors/colors';
 import { v4 as uuidv4 } from 'uuid';
 import TaskCard from './taskCard';
 import PriorityButton from './priorityButton';
-import { Input, IconButton, Chip } from '@mui/material';
+import CustomInput from '../input/cutomInput';
+import { IconButton, Chip } from '@mui/material';
+import CustomTooltip from '../Tooltip/customTooltip';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDrop } from 'react-dnd';
 import { collection, doc, updateDoc, deleteDoc, runTransaction } from 'firebase/firestore';
@@ -251,20 +253,23 @@ export default function Tasks({
                         priority={newTaskPriority} 
                         onPriorityChange={handlePriorityChange}
                     />
-                    <Input
+                    <CustomInput
                         placeholder="Create a task..."
                         value={newTaskName}
                         onChange={handleNameChange}
                     />
                 </div>
-                <IconButton onClick={addTask} disabled={newTaskName===''}>
-                    <AddCircleIcon/>
-                </IconButton>
+                <CustomTooltip title="Add Task" placement="top" arrow>
+                    <IconButton onClick={addTask} disabled={newTaskName===''}>
+                        <AddCircleIcon/>
+                    </IconButton>
+                </CustomTooltip>
+               
             </div>
             <div className="sections">
                 <div className="section todo-section">
                     <div className="section_header">
-                        <div>
+                        <div className="section_header_title">
                             Todo
                         </div>
                         <Chip label={numberOfTodoTask.toString()} size="small"/>
@@ -276,7 +281,7 @@ export default function Tasks({
                 </div>
                 <div className="section inProgress-section">
                 <div className="section_header">
-                        <div>
+                        <div className="section_header_title">
                             In Progress
                         </div>
                         <Chip label={numberOfProgressTask.toString()} size="small"/>
@@ -288,7 +293,7 @@ export default function Tasks({
                 </div>
                 <div className="section done-section">
                     <div className="section_header">
-                        <div>
+                        <div className="section_header_title">
                             Done
                         </div>
                         <Chip label={numberOfDoneTask.toString()} size="small"/>

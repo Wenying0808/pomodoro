@@ -1,14 +1,16 @@
 import React from 'react';
 import './taskCard.css';
 import { colors } from '../colors/colors';
-import { Input, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
+import CustomTooltip from '../Tooltip/customTooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useDrag } from 'react-dnd';
 import PriorityButton from './priorityButton';
+import CustomInput from '../input/cutomInput';
 
 export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
-
+    
     const [{ isDragging }, dragRef] = useDrag(() => ({
         type: 'task',
         item: { id: task.id, status: task.status, name: task.name, priority: task.priority }, 
@@ -42,9 +44,9 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
         >
             <div className="task-card_priority-name" >
                 <PriorityButton priority={task.priority} onPriorityChange={handlePriorityChange}/>
-                <Input
-                    value={task.name}
-                    onChange={handleNameChange}
+                <CustomInput
+                value={task.name}
+                onChange={handleNameChange}
                 />
             </div>
             <div className="task-card_actions" >
@@ -52,13 +54,19 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
                 ? 
                 ""
                 : 
-                <IconButton aria-label="complete" onClick={handleTaskComplete}>
-                    <CheckCircleOutlineIcon />
-                </IconButton>
+                <CustomTooltip title="Mark As Complete" placement="top" arrow>
+                    <IconButton aria-label="complete" onClick={handleTaskComplete}>
+                        <CheckCircleOutlineIcon />
+                    </IconButton>
+                </CustomTooltip>
+                
                 }
-                <IconButton aria-label="delete" onClick={handleTaskDelete}>
-                    <DeleteIcon />
-                </IconButton>
+                <CustomTooltip title="Delete Task">
+                    <IconButton aria-label="delete" onClick={handleTaskDelete}>
+                            <DeleteIcon />
+                    </IconButton>
+                </CustomTooltip>
+               
             </div>
         </div>
     );

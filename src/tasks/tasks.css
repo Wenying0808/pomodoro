@@ -56,6 +56,10 @@
     align-items: center;
     align-self: stretch;
 }
+.section_header_title{
+    font-size: 16px;
+    font-weight: 600;
+}
 
 .section_tasks-list{
     display: flex;
