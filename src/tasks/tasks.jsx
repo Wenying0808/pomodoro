@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import PriorityButton from './priorityButton';
 import CustomInput from '../input/cutomInput';
 import Section from './section';
-import { DndContext, closestCorners } from '@dnd-kit/core';
+import TaskCard from './taskCard';
+import { DndContext, closestCorners, DragOverlay } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { IconButton } from '@mui/material';
 import CustomTooltip from '../Tooltip/customTooltip';
@@ -27,10 +28,10 @@ export default function Tasks({
 
     const [newTaskPriority, setNewTaskPriority] = useState('low');
     const [newTaskName, setNewTaskName] = useState('');
-
     const [numberOfTodoTask, setnumberOfTodoTask] = useState(0);
     const [numberOfProgressTask, setnumberOfProgressTask] = useState(0);
     const [numberOfDoneTask, setnumberOfDoneTask] = useState(0);
+    const [activeId, setActiveId] = useState(null);
 
     useEffect(() => {
         setnumberOfTodoTask(todoOrder.length);
@@ -145,16 +146,20 @@ export default function Tasks({
         }
     };
 
+    const handleDragStart = (event) => {
+        const { active } = event;
+        setActiveId(active.id);
+    }
 
     const handleDragEnd = async (event) => {
-        const { active, over } = event;
+        const {  over } = event;
 
-        if (!over) return;
+        if (!over) {
+            setActiveId(null);
+            return;
+        }
 
-        const activeId = active.id;
-        const overId = over.id;
-
-        const activeStatus = getTaskStatus(active.id);
+        const activeStatus = getTaskStatus(activeId);
         // Check if we're dropping onto a section or a task
         const isDropOnSection = over.id.includes('-section');
         const overStatus = isDropOnSection ? getSectionStatus(over.id) : getTaskStatus(over.id);
@@ -212,6 +217,8 @@ export default function Tasks({
 
         } catch (error) {
             console.error("Error updating Firestore after drag:", error);
+        } finally {
+            setActiveId(null);  // Reset activeId after all operations
         }
     };
 
@@ -268,7 +275,11 @@ export default function Tasks({
                 </CustomTooltip>
                
             </div>
-            <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}> 
+            <DndContext 
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd} 
+                collisionDetection={closestCorners}
+            > 
                 <div className="sections">
                     <Section 
                         id="todo" 
@@ -301,6 +312,20 @@ export default function Tasks({
                         onComplete={completeTask}
                     />
                 </div>
+                {
+                    <DragOverlay>
+                    {activeId ? (
+                        <TaskCard
+                        id={activeId}
+                        task={tasks[activeId]}
+                        onUpdate={updateTask}
+                        onDelete={deleteTask}
+                        onComplete={completeTask}
+                        isDragging={true}
+                        />
+                    ) : null}
+                    </DragOverlay>
+                }
             </DndContext>
         </div>
     )

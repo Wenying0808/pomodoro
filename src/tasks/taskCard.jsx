@@ -11,7 +11,7 @@ import CustomInput from '../input/cutomInput';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export default function TaskCard({ id, task, onUpdate, onDelete, onComplete }){
+export default function TaskCard({ id, task, onUpdate, onDelete, onComplete, isDragging }){
 
     const {
         attributes,
@@ -24,6 +24,7 @@ export default function TaskCard({ id, task, onUpdate, onDelete, onComplete }){
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
+        opacity: isDragging ? 0.5 : 1,
     };
 
 
@@ -71,12 +72,11 @@ export default function TaskCard({ id, task, onUpdate, onDelete, onComplete }){
                     </IconButton>
                 </CustomTooltip>
                 <div 
-                    className='drag-handle'
                     {...listeners} 
                     {...attributes}
                 >
                     <CustomTooltip title="Move Task">
-                        <IconButton>
+                        <IconButton sx={{cursor:'move'}}>
                             <DragIndicatorIcon/>
                         </IconButton>
                     </CustomTooltip>

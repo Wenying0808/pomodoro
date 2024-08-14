@@ -4,6 +4,7 @@ import { Chip } from "@mui/material";
 import TaskCard from "./taskCard";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { createPortal } from "react-dom";
 
 export default function Section ({ id, title, tasks, taskIds, numberOfCards, onUpdate, onDelete, onComplete }) {
 
@@ -21,6 +22,7 @@ export default function Section ({ id, title, tasks, taskIds, numberOfCards, onU
             </div>
             <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
                 <div className="section_tasks-list" >
+
                     {taskIds.map((taskId) => (
                         <TaskCard
                             key={taskId}
