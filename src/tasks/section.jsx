@@ -5,7 +5,7 @@ import TaskCard from "./taskCard";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-export default function Section ({ id, title, tasks, taskIds, numberOfCards }) {
+export default function Section ({ id, title, tasks, taskIds, numberOfCards, onUpdate, onDelete, onComplete }) {
 
     const { setNodeRef } = useDroppable({
         id: `${id}-section`,
@@ -26,11 +26,13 @@ export default function Section ({ id, title, tasks, taskIds, numberOfCards }) {
                             key={taskId}
                             id={taskId}
                             task={tasks[taskId]}
+                            onUpdate={onUpdate}
+                            onDelete={onDelete}
+                            onComplete={onComplete}
                         />
                     ))}
                 </div>
             </SortableContext>      
         </div>
     )
-
 };

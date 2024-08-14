@@ -71,7 +71,7 @@ export default function Tasks({
         }
     };
 
-    /*
+ 
     const updateTask = async(updatedTask) => {
         try {
             console.log('Updating task:', updatedTask); 
@@ -106,35 +106,44 @@ export default function Tasks({
         const updatedTask = {...task, status: "done"};
         await updateTask(updatedTask);
         setTasks({ ...tasks, [taskId]: updatedTask });
+
         if (task.status === "todo"){
             setTodoOrder(prevOrder => prevOrder.filter(id => id !== taskId));
         } else if (task.status === "inProgress"){
             setInProgressOrder(prevOrder => prevOrder.filter(id => id !== taskId));
-        }    
-        setDoneOrder(prevOrder => [taskId, ...prevOrder]);
+        } 
+        setDoneOrder(prevOrder => [taskId, ...prevOrder]); 
     };
 
     const deleteTask = async(taskId) => {
         try {
              // Delete task from Firestore
-            const userRef = doc (db, 'users', user.uid);
-            const tasksCollectionRef = collection(userRef, 'tasks')
-            const taskRef = doc(tasksCollectionRef , taskId); // Replace 'tasks' with your collection name
-            await deleteDoc(taskRef);
+            const userDocRef = doc (db, 'users', user.uid);
+            const tasksCollectionRef = collection(userDocRef, 'tasks')
+            const taskDocRef = doc(tasksCollectionRef , taskId); // Replace 'tasks' with your collection name
+            await deleteDoc(taskDocRef);
 
             const updatedTasks = {...tasks};
             delete updatedTasks[taskId];
             setTasks(updatedTasks);
+
             // remove the tasks from order list
             setTodoOrder(prevOrder => prevOrder.filter(id => id !== taskId));
             setInProgressOrder(prevOrder => prevOrder.filter(id => id !== taskId));
             setDoneOrder(prevOrder => prevOrder.filter(id => id !== taskId));
 
+            // Update the order in Firestore
+            await updateDoc(userDocRef, {
+                todoOrder: todoOrder.filter(id => id !== taskId),
+                inProgressOrder: inProgressOrder.filter(id => id !== taskId),
+                doneOrder: doneOrder.filter(id => id !== taskId)
+            });
+
         } catch (error) {
             console.log('Error deleting a task in firestore', error)
         }
     };
-    */
+
 
     const handleDragEnd = async (event) => {
         const { active, over } = event;
@@ -260,9 +269,36 @@ export default function Tasks({
             </div>
             <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}> 
                 <div className="sections">
-                    <Section id="todo" title="To Do" tasks={tasks} taskIds={todoOrder} numberOfCards={numberOfTodoTask} />
-                    <Section id="inProgress" title="In Progres" tasks={tasks} taskIds={inProgressOrder} numberOfCards={numberOfProgressTask} />
-                    <Section id="done" title="Done" tasks={tasks} taskIds={doneOrder} numberOfCards={numberOfDoneTask} />
+                    <Section 
+                        id="todo" 
+                        title="To Do" 
+                        tasks={tasks} 
+                        taskIds={todoOrder} 
+                        numberOfCards={numberOfTodoTask} 
+                        onUpdate={updateTask}
+                        onDelete={deleteTask}
+                        onComplete={completeTask}
+                    />
+                    <Section 
+                        id="inProgress" 
+                        title="In Progres" 
+                        tasks={tasks} 
+                        taskIds={inProgressOrder} 
+                        numberOfCards={numberOfProgressTask} 
+                        onUpdate={updateTask}
+                        onDelete={deleteTask}
+                        onComplete={completeTask}
+                    />
+                    <Section 
+                        id="done" 
+                        title="Done" 
+                        tasks={tasks} 
+                        taskIds={doneOrder} 
+                        numberOfCards={numberOfDoneTask} 
+                        onUpdate={updateTask}
+                        onDelete={deleteTask}
+                        onComplete={completeTask}
+                    />
                 </div>
             </DndContext>
         </div>
