@@ -5,6 +5,7 @@ import { IconButton } from '@mui/material';
 import CustomTooltip from '../Tooltip/customTooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import PriorityButton from './priorityButton';
 import CustomInput from '../input/cutomInput';
 import { useSortable } from '@dnd-kit/sortable';
@@ -44,8 +45,6 @@ export default function TaskCard({ id, task, onUpdate, onDelete, onComplete }){
             className="task-card" 
             ref={setNodeRef} 
             style={style} 
-            {...listeners} 
-            {...attributes}
         >
             <div className="task-card_priority-name" >
                 <PriorityButton priority={task.priority} onPriorityChange={handlePriorityChange}/>
@@ -71,6 +70,18 @@ export default function TaskCard({ id, task, onUpdate, onDelete, onComplete }){
                             <DeleteIcon />
                     </IconButton>
                 </CustomTooltip>
+                <div 
+                    className='drag-handle'
+                    {...listeners} 
+                    {...attributes}
+                >
+                    <CustomTooltip title="Move Task">
+                        <IconButton>
+                            <DragIndicatorIcon/>
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+                
                
             </div>
         </div>

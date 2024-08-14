@@ -66,6 +66,7 @@ export default function Tasks({
                 setNewTaskPriority('low');
                 setTodoOrder(prevOrder => [newTaskId, ...prevOrder]);
             });
+            console.log('New task added', newTask);
         } catch (error) {
             console.error('Error adding task in firestore:', error);
         }
