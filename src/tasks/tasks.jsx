@@ -2,13 +2,14 @@ import React, {useState, useEffect} from 'react';
 import './tasks.css';
 import { colors } from '../colors/colors';
 import { v4 as uuidv4 } from 'uuid';
-import TaskCard from './taskCard';
 import PriorityButton from './priorityButton';
 import CustomInput from '../input/cutomInput';
-import { IconButton, Chip } from '@mui/material';
+import Section from './section';
+import { DndContext, closestCorners } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
+import { IconButton } from '@mui/material';
 import CustomTooltip from '../Tooltip/customTooltip';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useDrop } from 'react-dnd';
 import { collection, doc, updateDoc, deleteDoc, runTransaction } from 'firebase/firestore';
 import { db } from '../.env/firebase';
 
@@ -36,8 +37,6 @@ export default function Tasks({
         setnumberOfProgressTask(inProgressOrder.length);
         setnumberOfDoneTask(doneOrder.length);
     }, [todoOrder, inProgressOrder, doneOrder]);
-
-    console.log ("initial to do order in tasks file", todoOrder);
 
     const handlePriorityChange = (newPriority) => {
         setNewTaskPriority(newPriority);
@@ -72,6 +71,7 @@ export default function Tasks({
         }
     };
 
+    /*
     const updateTask = async(updatedTask) => {
         try {
             console.log('Updating task:', updatedTask); 
@@ -114,98 +114,6 @@ export default function Tasks({
         setDoneOrder(prevOrder => [taskId, ...prevOrder]);
     };
 
-    const reorderTasks = (sourceId, destinationId, sourceList, setSourceList) => {
-        const newOrder = [...sourceList];
-        const sourceIndex = newOrder.indexOf(sourceId);
-        const destinationIndex = newOrder.indexOf(destinationId);
-        
-        if (sourceIndex === -1 || destinationIndex === -1) return;
-
-        // remove from sourceIndex
-        newOrder.splice(sourceIndex, 1);
-        // insert it into destinationIndex
-        newOrder.splice(destinationIndex, 0, sourceId);
-        setSourceList(newOrder);
-    };
- 
-    const [, dropTodo] = useDrop(() => ({
-        accept: 'task',
-        hover: (item, monitor) => {
-            const draggedId = item.id;
-            const overId = monitor.getItem().id;         
-            if (draggedId === overId) return;
-            if (item.status === 'todo') {
-                reorderTasks(draggedId, overId, todoOrder, setTodoOrder);
-            }
-        },
-        drop: (item) => {
-            const sourceId = item.id;
-            // move from other sections to todo Section
-            if (item.status !== "todo"){
-                const updatedTask = { ...item, status: 'todo' };
-                updateTask(updatedTask);
-                setTodoOrder((prevOrder => [...prevOrder, sourceId]));
-                if (item.status === "inProgress"){
-                    setInProgressOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
-                } else if (item.status === "done"){
-                    setDoneOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
-                }
-            }
-        },
-    }));
-    
-    const [, dropInProgress] = useDrop(() => ({
-        accept: 'task',
-        hover: (item, monitor) => {
-            const draggedId = item.id;
-            const overId = monitor.getItem().id;         
-            if (draggedId === overId) return;
-            if (item.status === 'inProgress') {
-                reorderTasks(draggedId, overId, inProgressOrder, setInProgressOrder);
-            }
-        },
-        drop: (item) => {
-            const sourceId = item.id;
-            // move from other sections to todo Section
-            if (item.status !== "inProgress"){
-                const updatedTask = { ...item, status: 'inProgress' };
-                updateTask(updatedTask);
-                setInProgressOrder((prevOrder => [...prevOrder, sourceId]));
-                if (item.status === "todo"){
-                    setTodoOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
-                } else if (item.status === "done"){
-                    setDoneOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
-                }
-            }
-        },
-    }));
-    
-    const [, dropDone] = useDrop(() => ({
-        accept: 'task',
-        hover: (item, monitor) => {
-            const draggedId = item.id;
-            const overId = monitor.getItem().id;         
-            if (draggedId === overId) return;
-            if (item.status === 'done') {
-                reorderTasks(draggedId, overId, doneOrder, setDoneOrder);
-            }
-        },
-        drop: (item) => {
-            const sourceId = item.id;
-            // move from other sections to todo Section
-            if (item.status !== "done"){
-                const updatedTask = { ...item, status: 'done' };
-                updateTask(updatedTask);
-                setDoneOrder((prevOrder => [...prevOrder, sourceId]));
-                if (item.status === "todo"){
-                    setTodoOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
-                } else if (item.status === "inProgress"){
-                    setInProgressOrder(prevOrder => prevOrder.filter(id => id !== sourceId));
-                }
-            }
-        },
-    }));
-
     const deleteTask = async(taskId) => {
         try {
              // Delete task from Firestore
@@ -226,24 +134,108 @@ export default function Tasks({
             console.log('Error deleting a task in firestore', error)
         }
     };
+    */
 
-    const renderTaskCards = (orderList) => {
-        return orderList.map((taskId) => {
-          const task = tasks[taskId];
-          if (!task) {
-            return <div key={taskId}></div>; // Handle missing task data
-          }
-          return (
-            <TaskCard
-              key={taskId}
-              task={task}
-              onUpdate={updateTask}
-              onDelete={deleteTask}
-              onComplete={completeTask}
-            />
-          );
-        });
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+
+        if (!over) return;
+
+        const activeId = active.id;
+        const overId = over.id;
+
+        const activeStatus = getTaskStatus(active.id);
+        // Check if we're dropping onto a section or a task
+        const isDropOnSection = over.id.includes('-section');
+        const overStatus = isDropOnSection ? getSectionStatus(over.id) : getTaskStatus(over.id);
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                if (activeStatus !== overStatus) {
+                    // Moving to a different section
+                    const activeTask = tasks[activeId];
+                    const updatedTask = { ...activeTask, status: overStatus };
+              
+                    // Remove from the original section
+                    const sourceOrder = getOrderByStatus(activeStatus);
+                    const updatedSourceOrder = sourceOrder.filter(id => id !== activeId);
+                    setOrderByStatus(activeStatus, updatedSourceOrder);
+              
+                    // Add to the new section
+                    const destinationOrder = getOrderByStatus(overStatus);
+                    const updatedDestinationOrder = [activeId, ...destinationOrder];
+                    setOrderByStatus(overStatus, updatedDestinationOrder);
+              
+                    // Update the task
+                    setTasks(prev => ({ ...prev, [activeId]: updatedTask }));
+                    
+                    // Update tasks in Firestore
+                    const userDocRef = doc(db, "users", user.uid);
+                    const tasksCollectionRef = collection(userDocRef, "tasks");
+                    const taskDocRef = doc (tasksCollectionRef, activeId);
+                    transaction.update(taskDocRef, { status: overStatus});
+
+                    // Update order in Firestore
+                    transaction.update(userDocRef, {
+                        [`${activeStatus}Order`]: updatedSourceOrder,
+                        [`${overStatus}Order`]: updatedDestinationOrder,
+                    });
+
+                  } else {
+                    // Reordering within the same section
+                    const currentOrder = getOrderByStatus(activeStatus);
+                    const oldIndex = currentOrder.indexOf(activeId);
+                    const newIndex = isDropOnSection ? 0 : currentOrder.indexOf(over.id);
+                    if (oldIndex !== newIndex) {
+                        const newOrder = arrayMove(currentOrder, oldIndex, newIndex);
+                        setOrderByStatus(activeStatus, newOrder);
+
+                        // Update order in Firestore
+                        const userDocRef = doc(db, "users", user.uid);
+                        transaction.update(userDocRef, {
+                            [`${activeStatus}Order`]: newOrder
+                        });
+                    }
+                  }
+            });
+            console.log("Firestore updated successfully after drag");
+
+        } catch (error) {
+            console.error("Error updating Firestore after drag:", error);
+        }
+    };
+
+    const getTaskStatus = (taskId) => {
+        if (todoOrder.includes(taskId)) return 'todo';
+        if (inProgressOrder.includes(taskId)) return 'inProgress';
+        if (doneOrder.includes(taskId)) return 'done';
+        return null;
+    };
+    
+    const getSectionStatus = (containerId) => {
+        if (containerId.includes('todo-section')) return 'todo';
+        if (containerId.includes('inProgress-section')) return 'inProgress';
+        if (containerId.includes('done-section')) return 'done';
+        return null;
+    };
+
+    const getOrderByStatus = (status) => {
+        switch (status) {
+          case 'todo': return todoOrder;
+          case 'inProgress': return inProgressOrder;
+          case 'done': return doneOrder;
+          default: return [];
+        }
       };
+    
+    const setOrderByStatus = (status, newOrder) => {
+        switch (status) {
+            case 'todo': setTodoOrder(newOrder); break;
+            case 'inProgress': setInProgressOrder(newOrder); break;
+            case 'done': setDoneOrder(newOrder); break;
+            default: return [];
+        }
+    };
 
     return(
         <div className="task-container">
@@ -266,43 +258,13 @@ export default function Tasks({
                 </CustomTooltip>
                
             </div>
-            <div className="sections">
-                <div className="section todo-section">
-                    <div className="section_header">
-                        <div className="section_header_title">
-                            Todo
-                        </div>
-                        <Chip label={numberOfTodoTask.toString()} size="small"/>
-                    </div>
-                    
-                    <div className="section_tasks-list" ref={dropTodo}>
-                        {renderTaskCards(todoOrder)}
-                    </div>                    
+            <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}> 
+                <div className="sections">
+                    <Section id="todo" title="To Do" tasks={tasks} taskIds={todoOrder} numberOfCards={numberOfTodoTask} />
+                    <Section id="inProgress" title="In Progres" tasks={tasks} taskIds={inProgressOrder} numberOfCards={numberOfProgressTask} />
+                    <Section id="done" title="Done" tasks={tasks} taskIds={doneOrder} numberOfCards={numberOfDoneTask} />
                 </div>
-                <div className="section inProgress-section">
-                <div className="section_header">
-                        <div className="section_header_title">
-                            In Progress
-                        </div>
-                        <Chip label={numberOfProgressTask.toString()} size="small"/>
-                    </div>
-                    
-                    <div className="section_tasks-list"  ref={dropInProgress}>
-                        {renderTaskCards(inProgressOrder)}
-                    </div>               
-                </div>
-                <div className="section done-section">
-                    <div className="section_header">
-                        <div className="section_header_title">
-                            Done
-                        </div>
-                        <Chip label={numberOfDoneTask.toString()} size="small"/>
-                    </div>
-                    <div className="section_tasks-list"  ref={dropDone}>
-                        {renderTaskCards(doneOrder)}
-                    </div>                    
-                </div>
-            </div>
+            </DndContext>
         </div>
     )
 };

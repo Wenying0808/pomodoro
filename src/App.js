@@ -8,8 +8,7 @@ import auth, { db, signInWithGoogle } from './.env/firebase';
 import { onAuthStateChanged, signOut} from 'firebase/auth';
 import { getDoc, getDocs, collection, doc } from 'firebase/firestore';
 import beepSound from './audio_BeepSound.wav';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndContext, closestCorners } from '@dnd-kit/core';
 
 export default function App() {
   const [view, setView] = useState('timer');
@@ -47,7 +46,7 @@ export default function App() {
       const tasksCollectionRef = collection(userDocRef, "tasks");
       // Fetch all documents in the tasks subcollection
       const tasksQuerySnapshot = await getDocs(tasksCollectionRef);
-      console.log("fetch tasks tasksQuerySnapshot", tasksQuerySnapshot)
+      /*console.log("fetch tasks tasksQuerySnapshot", tasksQuerySnapshot)*/
 
       const tasksData = {};
       const todoDefaultOrder = [];
@@ -70,8 +69,6 @@ export default function App() {
       setTodoOrder(todoDefaultOrder);
       setInProgressOrder(inProgressDefaultOrder);
       setDoneOrder(doneDefaultOrder);
-
-      console.log("tasks", tasks);
 
     } catch (error) {
       console.error("Error fetching tasks from firestore:", error);
@@ -98,21 +95,21 @@ export default function App() {
           const userDocSnap = await getDoc(userDocRef);
 
           if(userDocSnap.exists) {
-            console.log('userDocSnap', userDocSnap);
+            /*console.log('userDocSnap', userDocSnap);*/
             // fetch data
             const userData = userDocSnap.data();
             console.log('userData', userData);
 
             const clockSettingsData = userData.clock;
-            console.log('clockSettingsData', clockSettingsData);
+            /*console.log('clockSettingsData', clockSettingsData);*/
 
             const clockSettingsDataFocusDuration = clockSettingsData["focusDuration"];
-            console.log('clockSettingsDataFocusDuration', clockSettingsDataFocusDuration);
+            /*console.log('clockSettingsDataFocusDuration', clockSettingsDataFocusDuration);*/
 
             const mergedSettingsData = {...clockState, ...clockSettingsData};
-            console.log('mergedSettingsData', mergedSettingsData);
+            /*console.log('mergedSettingsData', mergedSettingsData);*/
 
-            // update clock settings
+            // fetch clock settings from Firestore and update local clock settings
             setClockState({
               ...clockState,
               // Merge clock settings from user data
@@ -120,6 +117,9 @@ export default function App() {
               // Update remainingTime based on fetched focusDuration
               remainingTime: formatTime(parseInt(clockSettingsDataFocusDuration * 60)),
             });
+
+            // fetch tasks
+            fetchTasks();
           }
         } catch (error) {
           console.error("Error fetching clock settings:", error);
@@ -136,10 +136,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      fetchTasks();
-    }
-  }, [user]);
+    fetchTasks();
+  },[user])
+
+  console.log("fetched tasks", tasks);
+  console.log("fetched todoOrder", todoOrder);
+  console.log("fetched inProgressOrder", inProgressOrder);
+  console.log("fetched doneOrder", doneOrder);
 
   // move the timer logic to app level in order to keep the timer running when the view switch to tasks
   useEffect(() => {
@@ -246,7 +249,7 @@ export default function App() {
         <CustomToggleButton value={view} onChange={handleViewChange}/>
         { view === 'timer' 
           ? <Clock user={user} clockState={clockState} onClockStateChange={handleClockStateChange}/>  
-          : <DndProvider backend={HTML5Backend}>
+          : <DndContext collisionDetection={closestCorners}>
               <Tasks 
                 user={user} 
                 tasks={tasks} 
@@ -258,7 +261,7 @@ export default function App() {
                 setInProgressOrder={setInProgressOrder}
                 setDoneOrder={setDoneOrder}
                 />
-            </DndProvider>
+            </DndContext>
         }
       </div>
     </div>

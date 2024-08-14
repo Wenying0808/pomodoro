@@ -5,19 +5,26 @@ import { IconButton } from '@mui/material';
 import CustomTooltip from '../Tooltip/customTooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useDrag } from 'react-dnd';
 import PriorityButton from './priorityButton';
 import CustomInput from '../input/cutomInput';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
-export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
+export default function TaskCard({ id, task, onUpdate, onDelete, onComplete }){
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: id });
     
-    const [{ isDragging }, dragRef] = useDrag(() => ({
-        type: 'task',
-        item: { id: task.id, status: task.status, name: task.name, priority: task.priority }, 
-        collect: (monitor) => ({
-            isDragging: !!monitor.isDragging(),
-        }),
-    }));
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
 
     const handlePriorityChange = (newPriority) => {
         onUpdate({ ...task, priority: newPriority });
@@ -35,12 +42,10 @@ export default function TaskCard({ task, onUpdate, onDelete, onComplete }){
     return (
         <div 
             className="task-card" 
-            ref={dragRef}
-            style={{
-                opacity: isDragging ? 0.5 : 1,
-                cursor: 'move',
-                backgroundColor: colors.White,
-            }}
+            ref={setNodeRef} 
+            style={style} 
+            {...listeners} 
+            {...attributes}
         >
             <div className="task-card_priority-name" >
                 <PriorityButton priority={task.priority} onPriorityChange={handlePriorityChange}/>
