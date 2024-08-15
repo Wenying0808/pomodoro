@@ -1,20 +1,27 @@
-import Tooltip from "./Tooltip";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import CustomTooltip from "./customTooltip";
+import { colors } from "../colors/colors";
 
 
 export default {
     title:"Tooltip",
-    component: Tooltip,
+    component: CustomTooltip,
     parameters: {
         layout: 'centered',
       },
 };
 
+const Template = (args) => (
+    <div style={{ textAlign: 'center', marginTop: '100px' }}>
+      <CustomTooltip {...args}>
+        <span style={{ cursor: 'pointer', padding: '10px', backgroundColor: colors.RoyalBlue, color: colors.White, borderRadius: '4px'}}>
+          Hover over me
+        </span>
+      </CustomTooltip>
+    </div>
+  );
 
-export const Default = {
-    args:{
-        tooltipText: "Tooltip content...",
-        children: <FontAwesomeIcon icon={faGear} size="lg"/>,
-    }
-}
+
+export const Default = Template.bind({});
+Default.args = {
+title: 'This is a custom tooltip',
+};
