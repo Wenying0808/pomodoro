@@ -1,11 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import './tasks.css';
-import { colors } from '../colors/colors';
 import { v4 as uuidv4 } from 'uuid';
-import PriorityButton from './priorityButton';
+import PriorityButton from './priorityButton/priorityButton';
 import CustomInput from '../input/cutomInput';
-import Section from './section';
-import TaskCard from './taskCard';
+import Section from './section/section';
+import TaskCard from './taskCard/taskCard';
 import { DndContext, closestCorners, DragOverlay } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { IconButton } from '@mui/material';

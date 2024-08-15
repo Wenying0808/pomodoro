@@ -1,5 +1,5 @@
 import './clock.css';
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../.env/firebase';
 import TimerButton from '../timerButton/timerButton';
@@ -11,18 +11,6 @@ import CircularProgressTimer from '../curcularProgress/circularProgressTimer';
 
 
 export default function Clock({ user, clockState, onClockStateChange }) {
-  const {
-    focusDuration,
-    breakDuration,
-    timerRunning,
-    timerType,
-    remainingTime,
-    sessionCount,
-    totalSessionCount,
-    progressValue,
-    isSettingsEmpty,
-    isSettingsVisible,
-  } = clockState;
 
   // save clock settings to firestore
   const saveSettingsToFirestore = async (newSettings) => {

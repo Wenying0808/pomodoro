@@ -1,13 +1,12 @@
 import React from 'react';
 import './taskCard.css';
-import { colors } from '../colors/colors';
 import { IconButton } from '@mui/material';
-import CustomTooltip from '../Tooltip/customTooltip';
+import CustomTooltip from '../../Tooltip/customTooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import PriorityButton from './priorityButton';
-import CustomInput from '../input/cutomInput';
+import PriorityButton from '../priorityButton/priorityButton';
+import CustomInput from '../../input/cutomInput';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -26,7 +25,6 @@ export default function TaskCard({ id, task, onUpdate, onDelete, onComplete, isD
         transition,
         opacity: isDragging ? 0.5 : 1,
     };
-
 
     const handlePriorityChange = (newPriority) => {
         onUpdate({ ...task, priority: newPriority });
@@ -81,8 +79,7 @@ export default function TaskCard({ id, task, onUpdate, onDelete, onComplete, isD
                         </IconButton>
                     </CustomTooltip>
                 </div>
-                
-               
+
             </div>
         </div>
     );

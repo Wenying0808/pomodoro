@@ -4,7 +4,7 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons';
 
 
 export default {
-    title: 'Timer Button',
+    title: 'Components/Timer Button',
     component: TimerButton,
 };
 

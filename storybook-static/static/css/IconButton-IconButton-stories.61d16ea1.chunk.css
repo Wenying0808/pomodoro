@@ -1,0 +1,36 @@
+.IconButtonDiv{
+    display: inline-flex;
+    padding: 4px;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 4px;
+
+    color: #4758DC;
+
+    color: var(--RoyalBlue, #4758DC);
+
+    cursor: pointer;
+}
+
+.IconButtonDiv:hover:not(.disabled){
+    background: #E1EBFF;
+    background: var(--Zumtho, #E1EBFF);
+    transition: background-color 0.1s ease-in; /*make the delay same as tooltip*/
+}
+
+.disabled{
+    color: #8B9ACE;
+    color: var(--Portage, #8B9ACE);
+    
+    border: none;
+    background-color: none;
+
+    cursor: not-allowed;
+}
+
+
+
+
+/*# sourceMappingURL=IconButton-IconButton-stories.61d16ea1.chunk.css.map*/
