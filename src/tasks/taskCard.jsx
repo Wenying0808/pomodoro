@@ -1,6 +1,5 @@
 import React from 'react';
 import './taskCard.css';
-import { colors } from '../colors/colors';
 import { IconButton } from '@mui/material';
 import CustomTooltip from '../Tooltip/customTooltip';
 import DeleteIcon from '@mui/icons-material/Delete';

@@ -2,7 +2,6 @@ import React, { useState }  from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Tooltip } from '@mui/material';
 import CustomTooltip from '../Tooltip/customTooltip';
 import { ReactComponent as LowPriorityIcon } from './ic_priority_low.svg';
 import { ReactComponent as MediumPriorityIcon } from './ic_priority_medium.svg';
@@ -41,12 +40,10 @@ return(
             open={open}
             onClose={handleClose}
         >
-            <MenuItem onClick={() => handlePriorityChange('low')}>Low</MenuItem>   
+            <MenuItem onClick={() => handlePriorityChange('low')}>Low</MenuItem>
             <MenuItem onClick={() => handlePriorityChange('medium')}>Medium</MenuItem>
             <MenuItem onClick={() => handlePriorityChange('high')}>High</MenuItem>
         </Menu>
-
     </div>
-    
 );
 }
