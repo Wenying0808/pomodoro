@@ -1,0 +1,38 @@
+
+> promodoro-timer@0.1.0 build-storybook
+> storybook build --output-dir /var/folders/tf/czbmvhps6tv1wl3jwq312z580000gp/T/chromatic--59571-ddIB4KDtXeRN
+
+storybook v8.2.9
+
+info => Cleaning outputDir: ../../../../../var/folders/tf/czbmvhps6tv1wl3jwq312z580000gp/T/chromatic--59571-ddIB4KDtXeRN
+info => Loading presets
+WARN The "@storybook/addon-mdx-gfm" addon is meant as a migration assistant for Storybook 8.0; and will likely be removed in a future version.
+WARN It's recommended you read this document:
+WARN https://storybook.js.org/docs/writing-docs/mdx#markdown-tables-arent-rendering-correctly
+WARN 
+WARN Once you've made the necessary changes, you can remove the addon from your package.json and storybook config.
+info => Building manager..
+info => Manager built (97 ms)
+info => Building preview..
+info Addon-docs: using MDX3
+info => Loading Webpack configuration from `node_modules/react-scripts`
+info => Removing existing JavaScript and TypeScript rules.
+info => Modifying Create React App rules.
+info => Using default Webpack5 setup
+info => Copying static files: public at ../../../../../var/folders/tf/czbmvhps6tv1wl3jwq312z580000gp/T/chromatic--59571-ddIB4KDtXeRN
+WARN asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
+WARN This can impact web performance.
+WARN Assets: 
+WARN   7a58d2cb9a6358f85e9b.png (456 KiB)
+WARN   746.a1c9b256.iframe.bundle.js (1010 KiB)
+WARN   776.0a6f1a10.iframe.bundle.js (827 KiB)
+WARN   968.a649e071.iframe.bundle.js (898 KiB)
+WARN entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
+WARN Entrypoints:
+WARN   main (845 KiB)
+WARN       runtime~main.f2ea39f5.iframe.bundle.js
+WARN       776.0a6f1a10.iframe.bundle.js
+WARN       main.baa78c0a.iframe.bundle.js
+WARN 
+info => Preview built (9.49 s)
+info => Output directory: /var/folders/tf/czbmvhps6tv1wl3jwq312z580000gp/T/chromatic--59571-ddIB4KDtXeRN
