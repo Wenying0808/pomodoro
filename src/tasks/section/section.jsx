@@ -1,10 +1,9 @@
 import React from "react";
 import "./section.css"
 import { Chip } from "@mui/material";
-import TaskCard from "./taskCard";
+import TaskCard from "../taskCard/taskCard";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { createPortal } from "react-dom";
 
 export default function Section ({ id, title, tasks, taskIds, numberOfCards, onUpdate, onDelete, onComplete }) {
 

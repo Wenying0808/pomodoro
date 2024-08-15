@@ -2,7 +2,7 @@ import React, { useState }  from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import CustomTooltip from '../Tooltip/customTooltip';
+import CustomTooltip from '../../Tooltip/customTooltip';
 import { ReactComponent as LowPriorityIcon } from './ic_priority_low.svg';
 import { ReactComponent as MediumPriorityIcon } from './ic_priority_medium.svg';
 import { ReactComponent as HighPriorityIcon } from './ic_priority_high.svg';
