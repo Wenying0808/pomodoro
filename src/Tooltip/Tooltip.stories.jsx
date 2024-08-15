@@ -3,7 +3,7 @@ import { colors } from "../colors/colors";
 
 
 export default {
-    title:"Tooltip",
+    title:"Components/Tooltip",
     component: CustomTooltip,
     parameters: {
         layout: 'centered',

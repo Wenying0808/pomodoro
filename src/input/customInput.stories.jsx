@@ -1,7 +1,7 @@
 import CustomInput from "./cutomInput";
 
 export default {
-    title: "Input",
+    title: "Components/Input",
     component: CustomInput,
     parameters: {
         layout: 'centered',  
