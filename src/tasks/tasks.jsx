@@ -11,7 +11,7 @@ import { IconButton } from '@mui/material';
 import CustomTooltip from '../Tooltip/customTooltip';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { collection, doc, updateDoc, deleteDoc, runTransaction } from 'firebase/firestore';
-import { db } from '../.env/firebase';
+import { db } from '../firebase';
 
 export default function Tasks({ 
     user, 

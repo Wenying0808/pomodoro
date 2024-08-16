@@ -1,7 +1,7 @@
 import './clock.css';
 import React from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../.env/firebase';
+import { db } from '../firebase';
 import TimerButton from '../timerButton/timerButton';
 import IconButton from "../IconButton/IconButton";
 import { faPlay, faPause, faRotateLeft } from '@fortawesome/free-solid-svg-icons';

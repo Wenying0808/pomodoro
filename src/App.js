@@ -4,7 +4,7 @@ import Navbar from './navbar/navbar';
 import CustomToggleButton from './toggleButton/toggleButton';
 import Clock from './clock/clock';
 import Tasks from './tasks/tasks';
-import auth, { db, signInWithGoogle } from './.env/firebase';
+import auth, { db, signInWithGoogle } from './firebase';
 import { onAuthStateChanged, signOut} from 'firebase/auth';
 import { getDoc, getDocs, collection, doc } from 'firebase/firestore';
 import beepSound from './audio_BeepSound.wav';

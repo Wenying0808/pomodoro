@@ -1,15 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
-import { getFirestore, addDoc, setDoc, collection, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, setDoc, collection, doc, getDoc } from 'firebase/firestore';
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyAiXjnyp4n0K7As5qSO5pJ9sfKgZ01Vous",
-  authDomain: "pomodoro-productivity.firebaseapp.com",
-  projectId: "pomodoro-productivity",
-  storageBucket: "pomodoro-productivity.appspot.com",
-  messagingSenderId: "5081308157",
-  appId: "1:5081308157:web:90ea598c6a3497f44bd794",
-  measurementId: "G-MG9GMRDH2K"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
