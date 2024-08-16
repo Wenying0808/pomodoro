@@ -4,6 +4,7 @@ A productivity tool that uses the Pomodoro Technique to enhance time management 
 
 ## Diagram
 
+![My Image](./public/Flowchart%20-%20Pomodoro%20Dev%20Chart.jpg)
 
 ## Storybbok
 
